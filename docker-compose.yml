@@ -1,0 +1,168 @@
+version: '3'
+services:
+#  node1:
+#    build: ./
+#    image: python:3.8
+#    container_name: node1
+#    volumes:
+#      - ./:/var/
+#    tty: true
+#    ports:
+#      - 7000:5000
+##    command: python /var/main.py node1:5000
+#
+#  node2:
+#    build: ./
+#    image: python:3.8
+#    container_name: node2
+#    volumes:
+#      - ./:/var/
+#    tty: true
+#    ports:
+#      - 8000:5000
+#    depends_on:
+#      - node1
+##    command: python /var/main.py node1:5000
+#
+#  node3:
+#    build: ./
+#    image: python:3.8
+#    container_name: node3
+#    volumes:
+#      - ./:/var/
+#    tty: true
+#    ports:
+#      - 9000:5000
+#    depends_on:
+#      - node1
+
+
+
+
+  node1:
+    build: ./
+    image: python:3.8
+    container_name: node1
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 7000:5000
+    command: python /var/main.py node1:5000
+
+  node2:
+    build: ./
+    image: python:3.8
+    container_name: node2
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 8000:5000
+    depends_on:
+      - node1
+    command: bash -c "sleep 1 && python /var/main.py node1:5000"
+
+  node3:
+    build: ./
+    image: python:3.8
+    container_name: node3
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 9000:5000
+    depends_on:
+      - node2
+    command: bash -c "sleep 3 && python /var/main.py node1:5000"
+
+  node4:
+    build: ./
+    image: python:3.8
+    container_name: node4
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 7100:5000
+    depends_on:
+      - node3
+    command: bash -c "sleep 5 && python /var/main.py node1:5000"
+
+  node5:
+    build: ./
+    image: python:3.8
+    container_name: node5
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 8100:5000
+    depends_on:
+      - node4
+    command: bash -c "sleep 7 && python /var/main.py node1:5000"
+
+  node6:
+    build: ./
+    image: python:3.8
+    container_name: node6
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 9100:5000
+    depends_on:
+      - node5
+    command: bash -c "sleep 9 && python /var/main.py node1:5000"
+
+  node7:
+    build: ./
+    image: python:3.8
+    container_name: node7
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 7200:5000
+    depends_on:
+      - node6
+    command: bash -c "sleep 11 && python /var/main.py node1:5000"
+
+  node8:
+    build: ./
+    image: python:3.8
+    container_name: node8
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 8200:5000
+    depends_on:
+      - node7
+    command: bash -c "sleep 13 && python /var/main.py node1:5000"
+
+  node9:
+    build: ./
+    image: python:3.8
+    container_name: node9
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 9200:5000
+    depends_on:
+      - node8
+    command: bash -c "sleep 15 && python /var/main.py node1:5000"
+
+  node10:
+    build: ./
+    image: python:3.8
+    container_name: node10
+    volumes:
+      - ./:/var/
+    tty: true
+    ports:
+      - 10000:5000
+    depends_on:
+      - node1
+    command: bash -c "sleep 17 && python /var/main.py node1:5000"

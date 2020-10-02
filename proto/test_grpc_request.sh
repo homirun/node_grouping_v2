@@ -1,0 +1,1 @@
+grpcurl -plaintext -d '{"request_id": "111-111", "id": "222-222", "sender_ip": "192.168.1.1", "boot_time": 1230000, "time_stamp": 12340000}' -import-path . -proto node.proto localhost:50051 node.AddRequestService/add_request
