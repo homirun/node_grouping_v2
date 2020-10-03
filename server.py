@@ -1,6 +1,6 @@
 import grpc
-import node_pb2
-import node_pb2_grpc
+from proto import node_pb2
+from proto import node_pb2_grpc
 from concurrent import futures
 import time
 
@@ -11,7 +11,6 @@ class AddRequestServiceServicer(node_pb2_grpc.AddRequestServiceServicer):
         super().__init__()
 
     def add_request(self, request, context):
-        print("aaaa")
         dummy_node_list = [{'id': 'aaaaa-aaaaa-aaaaa-aaaaa', 'ip': '192.168.100.1', 'boot_time': 1000000, 'group_id': 1,
                             'is_primary': True},
                            {'id': 'bbbbb-bbbbb-bbbbb-bbbbb', 'ip': '192.168.100.2', 'boot_time': 2000000, 'group_id': 2,
