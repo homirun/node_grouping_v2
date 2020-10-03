@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\nnode.proto\x12\x04node\"i\n\rAddRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x11\n\tsender_ip\x18\x03 \x01(\t\x12\x11\n\tboot_time\x18\x04 \x01(\x04\x12\x12\n\ntime_stamp\x18\x05 \x01(\x04\"W\n\x0e\x41\x64\x64ResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x1d\n\tnode_list\x18\x02 \x03(\x0b\x32\n.node.Node\x12\x12\n\ntime_stamp\x18\x03 \x01(\x04\"W\n\x04Node\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x11\n\tboot_time\x18\x03 \x01(\x04\x12\x10\n\x08group_id\x18\x04 \x01(\x04\x12\x12\n\nis_primary\x18\x05 \x01(\x08\x32O\n\x11\x41\x64\x64RequestService\x12:\n\x0b\x61\x64\x64_request\x12\x13.node.AddRequestDef\x1a\x14.node.AddResponseDef\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\nnode.proto\x12\x04node\"i\n\rAddRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x11\n\tsender_ip\x18\x03 \x01(\t\x12\x11\n\tboot_time\x18\x04 \x01(\x02\x12\x12\n\ntime_stamp\x18\x05 \x01(\x02\"W\n\x0e\x41\x64\x64ResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x1d\n\tnode_list\x18\x02 \x03(\x0b\x32\n.node.Node\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"W\n\x04Node\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x11\n\tboot_time\x18\x03 \x01(\x02\x12\x10\n\x08group_id\x18\x04 \x01(\x04\x12\x12\n\nis_primary\x18\x05 \x01(\x08\x32O\n\x11\x41\x64\x64RequestService\x12:\n\x0b\x61\x64\x64_request\x12\x13.node.AddRequestDef\x1a\x14.node.AddResponseDef\"\x00\x62\x06proto3'
 )
 
 
@@ -56,15 +56,15 @@ _ADDREQUESTDEF = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='boot_time', full_name='node.AddRequestDef.boot_time', index=3,
-      number=4, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='time_stamp', full_name='node.AddRequestDef.time_stamp', index=4,
-      number=5, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
+      number=5, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -109,8 +109,8 @@ _ADDRESPONSEDEF = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='time_stamp', full_name='node.AddResponseDef.time_stamp', index=2,
-      number=3, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -155,8 +155,8 @@ _NODE = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='boot_time', full_name='node.Node.boot_time', index=2,
-      number=3, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),

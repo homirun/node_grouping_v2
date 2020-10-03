@@ -7,20 +7,20 @@ message AddRequestDef {
   string request_id = 1;
   string id = 2;
   string sender_ip = 3;
-  uint64 boot_time = 4;
-  uint64 time_stamp = 5;
+  float boot_time = 4;
+  float time_stamp = 5;
 }
 
 message AddResponseDef {
   string request_id = 1;
   repeated Node node_list = 2;
-  uint64 time_stamp = 3;
+  float time_stamp = 3;
 }
 
 message Node{
   string id = 1;
   string ip = 2;
-  uint64 boot_time = 3;
+  float boot_time = 3;
   uint64 group_id = 4;
   bool is_primary = 5;
 
