@@ -3,6 +3,7 @@ import uuid
 import time
 import sys
 from datetime import datetime
+from multiprocessing import Process, Queue
 
 import grpc
 from netifaces import interfaces, ifaddresses, AF_INET
@@ -21,6 +22,12 @@ logger = logger_setting.logger.getChild(__name__)
 
 def main():
     node_id, node_list = init()
+    queue = Queue()
+    server_process = Process(target=serve, args=(queue, node_list))
+    server_process.start()
+    logger.info('Start server_process')
+    while True:
+        logger.info(queue.get())
 
 
 def init():
@@ -49,7 +56,6 @@ def init():
 
         logger.debug(node_list)
 
-    start_grpc_server()
     return node_id, node_list
 
 
@@ -97,10 +103,6 @@ def get_boot_unix_time():
 
 def get_now_unix_time():
     return float(datetime.now().strftime('%s'))
-
-
-def start_grpc_server():
-    pass
 
 
 if __name__ == '__main__':
