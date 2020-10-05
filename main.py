@@ -39,18 +39,16 @@ def init():
         else:
             request_ip = input('request_ip:')
 
-        res_node_list = throw_add_request(node_id, request_ip, my_ip)
-
-        if res_node_list is False:
-            # もし他のノードが存在しなかった時
+        try:
+            res_node_list = throw_add_request(node_id, request_ip, my_ip)
+        except grpc.RpcError:
+            # ipが無効だったときは独立して単独でクラスタを形成し始める
             node_list.extend(create_node_list(node_id))
         else:
-            pass
-            # resの値をnode_listへ
-            # TODO nodesにnodeの情報を格納する
-            # nodes.extend(res['node_list'])
             node_list.extend(res_node_list)
-            logger.debug(node_list)
+
+        logger.debug(node_list)
+
     start_grpc_server()
     return node_id, node_list
 
