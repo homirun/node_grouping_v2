@@ -1,7 +1,6 @@
 import asyncio
 import uuid
 import time
-import logging
 import sys
 from datetime import datetime
 
@@ -13,6 +12,11 @@ from proto import node_pb2
 from proto import node_pb2_grpc
 from server import *
 from node import *
+import logger_setting
+
+
+logger_setting.logger_setting()
+logger = logger_setting.logger.getChild(__name__)
 
 
 def main():
@@ -20,10 +24,10 @@ def main():
 
 
 def init():
-    print('/*----init----*/')
+    logger.info('Initialize Process')
     node_id = create_node_id()
     my_ip = None
-    nodes = []
+    node_list = []
     try:
         my_ip = ifaddresses('en0')[AF_INET][0]['addr']
     except ValueError:
@@ -35,18 +39,20 @@ def init():
         else:
             request_ip = input('request_ip:')
 
-        res = throw_add_request(node_id, request_ip, my_ip)
+        res_node_list = throw_add_request(node_id, request_ip, my_ip)
 
-        if res is False:
+        if res_node_list is False:
             # もし他のノードが存在しなかった時
-            nodes.extend(create_node_list(node_id))
+            node_list.extend(create_node_list(node_id))
         else:
             pass
             # resの値をnode_listへ
             # TODO nodesにnodeの情報を格納する
             # nodes.extend(res['node_list'])
+            node_list.extend(res_node_list)
+            logger.debug(node_list)
     start_grpc_server()
-    return node_id, nodes
+    return node_id, node_list
 
 
 def throw_add_request(node_id, request_ip, my_ip):
@@ -55,9 +61,12 @@ def throw_add_request(node_id, request_ip, my_ip):
         request_message = node_pb2.AddRequestDef(request_id=create_request_id(), id=node_id, sender_ip=my_ip,
                                                  boot_time=get_boot_unix_time(), time_stamp=get_now_unix_time())
         response = stub.add_request(request_message)
-        print(response)
-
-    return response
+        response_node_list = []
+        for node in response.node_list:
+            tmp_node = Node(uid=node.id, ip=node.ip, boot_time=node.boot_time, group_id=node.group_id,
+                            is_primary=node.is_primary)
+            response_node_list.append(tmp_node.__dict__)
+    return response_node_list
 
 
 def create_node_list(my_node_id):
