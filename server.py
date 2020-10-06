@@ -33,6 +33,10 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
         return node_pb2.AddResponseDef(request_id=request.request_id, node_list=share_node_list,
                                        time_stamp=float(datetime.now().strftime('%s')))
 
+    def update_request(self, request, context):
+        global share_node_list, process_queue
+        pass
+
 
 def serve(queue, default_node_list):
     global share_node_list, process_queue

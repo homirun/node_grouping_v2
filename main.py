@@ -28,6 +28,7 @@ def main():
     logger.info('Start server_process')
     while True:
         # QueueではNode_listのやり取りのみを行う. 差分はServer側で処理し持ってくる
+        # TODO: groupingを呼ぶ
         queue_content = queue.get()
         logger.debug(queue_content)
 
@@ -80,6 +81,10 @@ def throw_add_request(node_id, request_ip, my_ip):
                             is_primary=node.is_primary)
             response_node_list.append(tmp_node.__dict__)
     return response_node_list
+
+
+def throw_update_request():
+    pass
 
 
 def create_node_list(my_node_id):
