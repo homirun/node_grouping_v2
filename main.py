@@ -27,8 +27,15 @@ def main():
     server_process.start()
     logger.info('Start server_process')
     while True:
-        # TODO: queue.get()の内容でgroupingさせる(queueではなくManagerあたりを使ったほうがいいかも検討)
-        logger.info(queue.get())
+        # QueueではNode_listのやり取りのみを行う. 差分はServer側で処理し持ってくる
+        queue_content = queue.get()
+        logger.debug(queue_content)
+
+        if 'for_primary' in queue_content and queue_content['for_primary'] is True:
+            # for_primaryキー存在しかつTrueの際にはPrimaryへは発出しない
+            pass
+        else:
+            pass
 
 
 def init():
@@ -63,7 +70,7 @@ def init():
 
 def throw_add_request(node_id, request_ip, my_ip):
     with grpc.insecure_channel(request_ip) as channel:
-        stub = node_pb2_grpc.AddRequestServiceStub(channel)
+        stub = node_pb2_grpc.RequestServiceStub(channel)
         request_message = node_pb2.AddRequestDef(request_id=create_request_id(), id=node_id, sender_ip=my_ip,
                                                  boot_time=get_boot_unix_time(), time_stamp=get_now_unix_time())
         response = stub.add_request(request_message)

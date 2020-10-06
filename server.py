@@ -13,7 +13,7 @@ share_node_list = list()
 process_queue = None
 
 
-class AddRequestServiceServicer(node_pb2_grpc.AddRequestServiceServicer):
+class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
 
     def __init__(self) -> None:
         super().__init__()
@@ -40,7 +40,7 @@ def serve(queue, default_node_list):
     process_queue = queue
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    node_pb2_grpc.add_AddRequestServiceServicer_to_server(AddRequestServiceServicer(), server)
+    node_pb2_grpc.add_RequestServiceServicer_to_server(RequestServiceServicer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     logger.info('Start gRPC Server')
