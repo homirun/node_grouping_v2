@@ -27,6 +27,7 @@ def main():
     server_process.start()
     logger.info('Start server_process')
     while True:
+        # TODO: queue.get()の内容でgroupingさせる(queueではなくManagerあたりを使ったほうがいいかも検討)
         logger.info(queue.get())
 
 
@@ -34,7 +35,7 @@ def init():
     logger.info('Initialize Process')
     node_id = create_node_id()
     my_ip = None
-    node_list = []
+    node_list = list()
     try:
         my_ip = ifaddresses('en0')[AF_INET][0]['addr']
     except ValueError:
@@ -54,6 +55,7 @@ def init():
         else:
             node_list.extend(res_node_list)
 
+        node_list = grouping(node_list)
         logger.debug(node_list)
 
     return node_id, node_list
@@ -65,7 +67,7 @@ def throw_add_request(node_id, request_ip, my_ip):
         request_message = node_pb2.AddRequestDef(request_id=create_request_id(), id=node_id, sender_ip=my_ip,
                                                  boot_time=get_boot_unix_time(), time_stamp=get_now_unix_time())
         response = stub.add_request(request_message)
-        response_node_list = []
+        response_node_list = list()
         for node in response.node_list:
             tmp_node = Node(uid=node.id, ip=node.ip, boot_time=node.boot_time, group_id=node.group_id,
                             is_primary=node.is_primary)

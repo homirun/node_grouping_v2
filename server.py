@@ -9,7 +9,7 @@ import logger_setting
 from node import *
 
 logger = logger_setting.logger.getChild(__name__)
-share_node_list = []
+share_node_list = list()
 process_queue = None
 
 
