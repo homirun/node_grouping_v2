@@ -19,12 +19,23 @@ class AddRequestServiceStub(object):
                 request_serializer=node__pb2.AddRequestDef.SerializeToString,
                 response_deserializer=node__pb2.AddResponseDef.FromString,
                 )
+        self.update_request = channel.unary_unary(
+                '/node.AddRequestService/update_request',
+                request_serializer=node__pb2.DiffNodeRequestDef.SerializeToString,
+                response_deserializer=node__pb2.DiffNodeResponseDef.FromString,
+                )
 
 
 class AddRequestServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def add_request(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def update_request(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_AddRequestServiceServicer_to_server(servicer, server):
                     servicer.add_request,
                     request_deserializer=node__pb2.AddRequestDef.FromString,
                     response_serializer=node__pb2.AddResponseDef.SerializeToString,
+            ),
+            'update_request': grpc.unary_unary_rpc_method_handler(
+                    servicer.update_request,
+                    request_deserializer=node__pb2.DiffNodeRequestDef.FromString,
+                    response_serializer=node__pb2.DiffNodeResponseDef.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class AddRequestService(object):
         return grpc.experimental.unary_unary(request, target, '/node.AddRequestService/add_request',
             node__pb2.AddRequestDef.SerializeToString,
             node__pb2.AddResponseDef.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def update_request(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/node.AddRequestService/update_request',
+            node__pb2.DiffNodeRequestDef.SerializeToString,
+            node__pb2.DiffNodeResponseDef.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

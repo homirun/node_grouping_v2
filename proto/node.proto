@@ -17,6 +17,21 @@ message AddResponseDef {
   float time_stamp = 3;
 }
 
+message DiffNodeRequestDef {
+  string request_id = 1;
+  string method = 2;
+  string node_id = 3;
+  string sender_ip = 4;
+  float boot_time = 5;
+  float time_stamp = 6;
+}
+
+message DiffNodeResponseDef {
+  string request_id = 1;
+  string status = 2;
+  float time_stamp = 3;
+}
+
 message Node{
   string id = 1;
   string ip = 2;
@@ -27,6 +42,6 @@ message Node{
 }
 
 service AddRequestService{
-
   rpc add_request(AddRequestDef) returns (AddResponseDef) {};
+  rpc update_request(DiffNodeRequestDef) returns (DiffNodeResponseDef) {};
 }
