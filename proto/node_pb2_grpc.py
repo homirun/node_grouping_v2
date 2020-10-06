@@ -5,7 +5,7 @@ import grpc
 import proto.node_pb2 as node__pb2
 
 
-class AddRequestServiceStub(object):
+class RequestServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,18 +15,18 @@ class AddRequestServiceStub(object):
             channel: A grpc.Channel.
         """
         self.add_request = channel.unary_unary(
-                '/node.AddRequestService/add_request',
+                '/node.RequestService/add_request',
                 request_serializer=node__pb2.AddRequestDef.SerializeToString,
                 response_deserializer=node__pb2.AddResponseDef.FromString,
                 )
         self.update_request = channel.unary_unary(
-                '/node.AddRequestService/update_request',
+                '/node.RequestService/update_request',
                 request_serializer=node__pb2.DiffNodeRequestDef.SerializeToString,
                 response_deserializer=node__pb2.DiffNodeResponseDef.FromString,
                 )
 
 
-class AddRequestServiceServicer(object):
+class RequestServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def add_request(self, request, context):
@@ -42,7 +42,7 @@ class AddRequestServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_AddRequestServiceServicer_to_server(servicer, server):
+def add_RequestServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'add_request': grpc.unary_unary_rpc_method_handler(
                     servicer.add_request,
@@ -56,12 +56,12 @@ def add_AddRequestServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'node.AddRequestService', rpc_method_handlers)
+            'node.RequestService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class AddRequestService(object):
+class RequestService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -75,7 +75,7 @@ class AddRequestService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/node.AddRequestService/add_request',
+        return grpc.experimental.unary_unary(request, target, '/node.RequestService/add_request',
             node__pb2.AddRequestDef.SerializeToString,
             node__pb2.AddResponseDef.FromString,
             options, channel_credentials,
@@ -92,7 +92,7 @@ class AddRequestService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/node.AddRequestService/update_request',
+        return grpc.experimental.unary_unary(request, target, '/node.RequestService/update_request',
             node__pb2.DiffNodeRequestDef.SerializeToString,
             node__pb2.DiffNodeResponseDef.FromString,
             options, channel_credentials,

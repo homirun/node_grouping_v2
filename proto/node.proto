@@ -41,7 +41,7 @@ message Node{
 
 }
 
-service AddRequestService{
+service RequestService{
   rpc add_request(AddRequestDef) returns (AddResponseDef) {};
   rpc update_request(DiffNodeRequestDef) returns (DiffNodeResponseDef) {};
 }
