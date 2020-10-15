@@ -61,7 +61,7 @@ services:
       - 8000:50051
     depends_on:
       - node1
-    command: bash -c "sleep 1 && python /var/main.py node1:50051"
+    command: bash -c "sleep 2 && python /var/main.py node1:50051"
 
   node3:
     build: ./
