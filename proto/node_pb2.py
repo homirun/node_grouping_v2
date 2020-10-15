@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\nnode.proto\x12\x04node\"i\n\rAddRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x11\n\tsender_ip\x18\x03 \x01(\t\x12\x11\n\tboot_time\x18\x04 \x01(\x02\x12\x12\n\ntime_stamp\x18\x05 \x01(\x02\"W\n\x0e\x41\x64\x64ResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x1d\n\tnode_list\x18\x02 \x03(\x0b\x32\n.node.Node\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"\x83\x01\n\x12\x44iffNodeRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06method\x18\x02 \x01(\t\x12\x0f\n\x07node_id\x18\x03 \x01(\t\x12\x11\n\tsender_ip\x18\x04 \x01(\t\x12\x11\n\tboot_time\x18\x05 \x01(\x02\x12\x12\n\ntime_stamp\x18\x06 \x01(\x02\"M\n\x13\x44iffNodeResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"W\n\x04Node\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x11\n\tboot_time\x18\x03 \x01(\x02\x12\x10\n\x08group_id\x18\x04 \x01(\x04\x12\x12\n\nis_primary\x18\x05 \x01(\x08\x32\x95\x01\n\x0eRequestService\x12:\n\x0b\x61\x64\x64_request\x12\x13.node.AddRequestDef\x1a\x14.node.AddResponseDef\"\x00\x12G\n\x0eupdate_request\x12\x18.node.DiffNodeRequestDef\x1a\x19.node.DiffNodeResponseDef\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\nnode.proto\x12\x04node\"i\n\rAddRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x11\n\tsender_ip\x18\x03 \x01(\t\x12\x11\n\tboot_time\x18\x04 \x01(\x02\x12\x12\n\ntime_stamp\x18\x05 \x01(\x02\"W\n\x0e\x41\x64\x64ResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x1d\n\tnode_list\x18\x02 \x03(\x0b\x32\n.node.Node\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"\x8f\x01\n\x12\x44iffNodeRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06method\x18\x02 \x01(\t\x12\x0f\n\x07node_id\x18\x03 \x01(\t\x12\n\n\x02ip\x18\x04 \x01(\t\x12\x11\n\tboot_time\x18\x05 \x01(\x02\x12\x11\n\tsender_ip\x18\x06 \x01(\t\x12\x12\n\ntime_stamp\x18\x07 \x01(\x02\"M\n\x13\x44iffNodeResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"W\n\x04Node\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x11\n\tboot_time\x18\x03 \x01(\x02\x12\x10\n\x08group_id\x18\x04 \x01(\x04\x12\x12\n\nis_primary\x18\x05 \x01(\x08\x32\x95\x01\n\x0eRequestService\x12:\n\x0b\x61\x64\x64_request\x12\x13.node.AddRequestDef\x1a\x14.node.AddResponseDef\"\x00\x12G\n\x0eupdate_request\x12\x18.node.DiffNodeRequestDef\x1a\x19.node.DiffNodeResponseDef\"\x00\x62\x06proto3'
 )
 
 
@@ -161,7 +161,7 @@ _DIFFNODEREQUESTDEF = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='sender_ip', full_name='node.DiffNodeRequestDef.sender_ip', index=3,
+      name='ip', full_name='node.DiffNodeRequestDef.ip', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -175,8 +175,15 @@ _DIFFNODEREQUESTDEF = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='time_stamp', full_name='node.DiffNodeRequestDef.time_stamp', index=5,
-      number=6, type=2, cpp_type=6, label=1,
+      name='sender_ip', full_name='node.DiffNodeRequestDef.sender_ip', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='time_stamp', full_name='node.DiffNodeRequestDef.time_stamp', index=6,
+      number=7, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -194,7 +201,7 @@ _DIFFNODEREQUESTDEF = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=217,
-  serialized_end=348,
+  serialized_end=360,
 )
 
 
@@ -239,8 +246,8 @@ _DIFFNODERESPONSEDEF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=350,
-  serialized_end=427,
+  serialized_start=362,
+  serialized_end=439,
 )
 
 
@@ -299,8 +306,8 @@ _NODE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=429,
-  serialized_end=516,
+  serialized_start=441,
+  serialized_end=528,
 )
 
 _ADDRESPONSEDEF.fields_by_name['node_list'].message_type = _NODE
@@ -355,8 +362,8 @@ _REQUESTSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=519,
-  serialized_end=668,
+  serialized_start=531,
+  serialized_end=680,
   methods=[
   _descriptor.MethodDescriptor(
     name='add_request',

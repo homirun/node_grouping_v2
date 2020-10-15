@@ -21,9 +21,10 @@ message DiffNodeRequestDef {
   string request_id = 1;
   string method = 2;
   string node_id = 3;
-  string sender_ip = 4;
+  string ip = 4;
   float boot_time = 5;
-  float time_stamp = 6;
+  string sender_ip = 6;
+  float time_stamp = 7;
 }
 
 message DiffNodeResponseDef {
