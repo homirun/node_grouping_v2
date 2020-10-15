@@ -3,3 +3,5 @@ netifaces==0.10.9
 requests==2.23.0
 uptime==3.0.1
 grpcio==1.32.0
+protobuf==3.13.0
+grpcio-tools==1.32.0
