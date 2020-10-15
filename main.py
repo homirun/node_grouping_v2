@@ -21,7 +21,7 @@ logger = logger_setting.logger.getChild(__name__)
 
 
 def main():
-    node_id, node_list = init()
+    node_id, node_list, my_ip = init()
     queue = Queue()
     server_process = Process(target=serve, args=(queue, node_list))
     server_process.start()
@@ -31,13 +31,16 @@ def main():
         # TODO: groupingを呼ぶ
         queue_content = queue.get()
 
-        logger.debug(queue_content)
-
-        if 'for_primary' in queue_content and queue_content['for_primary'] is True:
-            # for_primaryキー存在しかつTrueの際にはPrimaryへは発出しない
-            pass
-        else:
-            throw_update_request(node_list)
+        old_node_list = node_list
+        node_list = queue_content['node_list']
+        node_list = grouping(node_list)
+        # if 'for_primary' in queue_content and queue_content['for_primary'] is True:
+        #     # for_primaryキー存在しかつTrueの際にはPrimaryへは発出しない
+        #     pass
+        # else:
+        if queue_content['is_allow_propagation'] is True:
+            throw_update_request_beta(queue_content['method'], queue_content['diff_list'],
+                                      old_node_list, node_id, my_ip)
 
 
 def init():
@@ -65,9 +68,8 @@ def init():
             node_list.extend(res_node_list)
 
         node_list = grouping(node_list)
-        logger.debug(node_list)
 
-    return node_id, node_list
+    return node_id, node_list, my_ip
 
 
 def throw_add_request(node_id, request_ip, my_ip):
@@ -84,8 +86,20 @@ def throw_add_request(node_id, request_ip, my_ip):
     return response_node_list
 
 
-def throw_update_request(node_list_diff: list):
+def throw_update_request(node_list_diff: list, old_node_list: list):
     pass
+
+
+def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: list, my_id, my_ip):
+    for node in old_node_list:
+        if node['id'] != my_id:
+            with grpc.insecure_channel(node['ip']+':50051') as channel:
+                stub = node_pb2_grpc.RequestServiceStub(channel)
+                request_message = node_pb2.DiffNodeRequestDef(request_id=create_request_id(), method=method,
+                                                              node_id=node_list_diff[0]['id'], ip=node_list_diff[0]['ip'],
+                                                              boot_time=float(node_list_diff[0]['boot_time']), sender_ip=my_ip,
+                                                              time_stamp=get_now_unix_time())
+                response = stub.update_request(request_message)
 
 
 def create_node_list(my_node_id):

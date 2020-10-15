@@ -29,14 +29,28 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
         logger.debug('request: %s', request)
         add_node = Node(uid=request.id, ip=request.sender_ip, boot_time=request.boot_time).__dict__
         share_node_list.append(Node(uid=request.id, ip=request.sender_ip, boot_time=request.boot_time).__dict__)
-        share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node]}
+        share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
+                      'is_allow_propagation': True}
         process_queue.put(share_data)
         return node_pb2.AddResponseDef(request_id=request.request_id, node_list=share_node_list,
                                        time_stamp=float(datetime.now().strftime('%s')))
 
     def update_request(self, request, context):
         global share_node_list, process_queue
-        pass
+        logger.debug('update: %s', request)
+        share_data = list()
+        if request.method == 'add':
+            add_node = Node(uid=request.node_id, ip=request.sender_ip, boot_time=request.boot_time).__dict__
+            share_node_list.append(Node(uid=request.node_id, ip=request.sender_ip, boot_time=request.boot_time).__dict__)
+            share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
+                          'is_allow_propagation': False}
+        else:
+            pass
+
+        process_queue.put(share_data)
+
+        return node_pb2.DiffNodeResponseDef(request_id=request.request_id, status='OK',
+                                            time_stamp=float(datetime.now().strftime('%s')))
 
 
 def serve(queue, default_node_list):
