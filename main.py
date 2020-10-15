@@ -30,13 +30,14 @@ def main():
         # QueueではNode_listのやり取りのみを行う. 差分はServer側で処理し持ってくる
         # TODO: groupingを呼ぶ
         queue_content = queue.get()
+
         logger.debug(queue_content)
 
         if 'for_primary' in queue_content and queue_content['for_primary'] is True:
             # for_primaryキー存在しかつTrueの際にはPrimaryへは発出しない
             pass
         else:
-            pass
+            throw_update_request(node_list)
 
 
 def init():
@@ -83,7 +84,7 @@ def throw_add_request(node_id, request_ip, my_ip):
     return response_node_list
 
 
-def throw_update_request():
+def throw_update_request(node_list_diff: list):
     pass
 
 

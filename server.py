@@ -27,9 +27,10 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
         #                     'group_id': 2, 'is_primary': True}]
 
         logger.debug('request: %s', request)
-
+        add_node = Node(uid=request.id, ip=request.sender_ip, boot_time=request.boot_time).__dict__
         share_node_list.append(Node(uid=request.id, ip=request.sender_ip, boot_time=request.boot_time).__dict__)
-        process_queue.put(share_node_list)
+        share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node]}
+        process_queue.put(share_data)
         return node_pb2.AddResponseDef(request_id=request.request_id, node_list=share_node_list,
                                        time_stamp=float(datetime.now().strftime('%s')))
 
