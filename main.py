@@ -1,19 +1,12 @@
-import asyncio
-import uuid
-import time
 import sys
-from datetime import datetime
 from multiprocessing import Process, Queue
 
-import grpc
-from netifaces import interfaces, ifaddresses, AF_INET
-import uptime
+from netifaces import ifaddresses, AF_INET
 
-from proto import node_pb2
-from proto import node_pb2_grpc
 from server import *
 from node import *
 import logger_setting
+from utils import *
 
 
 logger_setting.logger_setting()
@@ -119,21 +112,6 @@ def create_node_list(my_node_id: str) -> list:
 
     return pre_node_list
 
-
-def create_node_id() -> str:
-    return str(uuid.uuid4())
-
-
-def create_request_id() -> str:
-    return str(uuid.uuid4())
-
-
-def get_boot_unix_time() -> float:
-    return uptime.boottime().timestamp()
-
-
-def get_now_unix_time() -> float:
-    return float(datetime.now().strftime('%s'))
 
 
 if __name__ == '__main__':

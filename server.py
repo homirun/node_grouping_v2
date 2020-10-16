@@ -2,10 +2,8 @@ import grpc
 from proto import node_pb2
 from proto import node_pb2_grpc
 from concurrent import futures
-import time
 from datetime import datetime
 
-import logger_setting
 from node import *
 
 logger = logger_setting.logger.getChild(__name__)
