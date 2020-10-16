@@ -27,8 +27,6 @@ def main():
     server_process.start()
     logger.info('Start server_process')
     while True:
-        # QueueではNode_listのやり取りのみを行う. 差分はServer側で処理し持ってくる
-        # TODO: groupingを呼ぶ
         queue_content = queue.get()
 
         old_node_list = node_list
@@ -72,7 +70,7 @@ def init():
     return node_id, node_list, my_ip
 
 
-def throw_add_request(node_id, request_ip, my_ip):
+def throw_add_request(node_id: str, request_ip: str, my_ip: str) -> list:
     with grpc.insecure_channel(request_ip) as channel:
         stub = node_pb2_grpc.RequestServiceStub(channel)
         request_message = node_pb2.AddRequestDef(request_id=create_request_id(), id=node_id, sender_ip=my_ip,
@@ -102,7 +100,11 @@ def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: 
                 response = stub.update_request(request_message)
 
 
-def create_node_list(my_node_id):
+def throw_heartbeat():
+    pass
+
+
+def create_node_list(my_node_id: str) -> list:
     node_id = my_node_id
     my_ip = None
     try:
@@ -118,19 +120,19 @@ def create_node_list(my_node_id):
     return pre_node_list
 
 
-def create_node_id():
+def create_node_id() -> str:
     return str(uuid.uuid4())
 
 
-def create_request_id():
+def create_request_id() -> str:
     return str(uuid.uuid4())
 
 
-def get_boot_unix_time():
+def get_boot_unix_time() -> float:
     return uptime.boottime().timestamp()
 
 
-def get_now_unix_time():
+def get_now_unix_time() -> float:
     return float(datetime.now().strftime('%s'))
 
 

@@ -53,7 +53,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
                                             time_stamp=float(datetime.now().strftime('%s')))
 
 
-def serve(queue, default_node_list):
+def serve(queue: object, default_node_list: list):
     global share_node_list, process_queue
     share_node_list = default_node_list
     process_queue = queue
