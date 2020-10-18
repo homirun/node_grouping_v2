@@ -1,5 +1,6 @@
 import sys
 from multiprocessing import Process, Queue
+from queue import Empty
 
 from netifaces import ifaddresses, AF_INET
 
@@ -15,23 +16,33 @@ logger = logger_setting.logger.getChild(__name__)
 
 def main():
     node_id, node_list, my_ip = init()
-    queue = Queue()
-    server_process = Process(target=serve, args=(queue, node_list))
+    q = Queue()
+    server_process = Process(target=serve, args=(q, node_list))
     server_process.start()
     logger.info('Start server_process')
+    count = 0
     while True:
-        queue_content = queue.get()
+        count += 1
 
-        old_node_list = node_list
-        node_list = queue_content['node_list']
-        node_list = grouping(node_list)
-        # if 'for_primary' in queue_content and queue_content['for_primary'] is True:
-        #     # for_primaryキー存在しかつTrueの際にはPrimaryへは発出しない
-        #     pass
-        # else:
-        if queue_content['is_allow_propagation'] is True:
-            throw_update_request_beta(queue_content['method'], queue_content['diff_list'],
-                                      old_node_list, node_id, my_ip)
+        try:
+            queue_content = q.get(block=True, timeout=0.5)
+        except Empty:
+            pass
+        else:
+            if queue_content:
+                old_node_list = node_list
+                node_list = queue_content['node_list']
+                node_list = grouping(node_list)
+                # if 'for_primary' in queue_content and queue_content['for_primary'] is True:
+                #     # for_primaryキー存在しかつTrueの際にはPrimaryへは発出しない
+                #     pass
+                # else:
+                if queue_content['is_allow_propagation'] is True:
+                    throw_update_request_beta(queue_content['method'], queue_content['diff_list'],
+                                              old_node_list, node_id, my_ip)
+        if count >= 3:
+            count = 0
+            throw_heartbeat(node_list, node_id)
 
 
 def init():
@@ -93,8 +104,19 @@ def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: 
                 response = stub.update_request(request_message)
 
 
-def throw_heartbeat():
-    pass
+def throw_heartbeat(node_list, my_id):
+    group_node_list = get_my_group_node_list(node_list, get_my_group_id(node_list, my_id))
+    for node in group_node_list:
+        if node['id'] != my_id:
+            try:
+                with grpc.insecure_channel(node['ip']+':50051') as channel:
+                    stub = node_pb2_grpc.RequestServiceStub(channel)
+                    request_message = node_pb2.HeartBeatRequestDef(request_id=create_request_id(), status='heartbeat',
+                                                                   time_stamp=get_now_unix_time())
+                    response = stub.update_request(request_message)
+            except grpc.RpcError:
+                logger.error('Connection Failed: %s', node)
+                # TODO: ここに再送など障害発生時の処理を書く予定
 
 
 def create_node_list(my_node_id: str) -> list:
@@ -111,7 +133,6 @@ def create_node_list(my_node_id: str) -> list:
     pre_node_list.append(my_node.__dict__)
 
     return pre_node_list
-
 
 
 if __name__ == '__main__':

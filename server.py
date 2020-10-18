@@ -2,9 +2,9 @@ import grpc
 from proto import node_pb2
 from proto import node_pb2_grpc
 from concurrent import futures
-from datetime import datetime
 
 from node import *
+from utils import *
 
 logger = logger_setting.logger.getChild(__name__)
 share_node_list = list()
@@ -39,7 +39,8 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
         share_data = list()
         if request.method == 'add':
             add_node = Node(uid=request.node_id, ip=request.sender_ip, boot_time=request.boot_time).__dict__
-            share_node_list.append(Node(uid=request.node_id, ip=request.sender_ip, boot_time=request.boot_time).__dict__)
+            share_node_list.append(Node(uid=request.node_id, ip=request.sender_ip,
+                                        boot_time=request.boot_time).__dict__)
             share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
                           'is_allow_propagation': False}
         else:
@@ -48,13 +49,19 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
         process_queue.put(share_data)
 
         return node_pb2.DiffNodeResponseDef(request_id=request.request_id, status='OK',
-                                            time_stamp=float(datetime.now().strftime('%s')))
+                                            time_stamp=get_now_unix_time())
+
+    def heartbeat_request(self, request, context):
+        global share_node_list, process_queue
+        logger.debug('heartbeat: %s', request)
+        return node_pb2.HeartBeatResponseDef(request_id=request.request_id, status='heartbeat_response',
+                                             time_stamp=get_now_unix_time())
 
 
-def serve(queue: object, default_node_list: list):
+def serve(q: object, default_node_list: list):
     global share_node_list, process_queue
     share_node_list = default_node_list
-    process_queue = queue
+    process_queue = q
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     node_pb2_grpc.add_RequestServiceServicer_to_server(RequestServiceServicer(), server)
