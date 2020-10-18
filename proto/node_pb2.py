@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\nnode.proto\x12\x04node\"i\n\rAddRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x11\n\tsender_ip\x18\x03 \x01(\t\x12\x11\n\tboot_time\x18\x04 \x01(\x02\x12\x12\n\ntime_stamp\x18\x05 \x01(\x02\"W\n\x0e\x41\x64\x64ResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x1d\n\tnode_list\x18\x02 \x03(\x0b\x32\n.node.Node\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"\x8f\x01\n\x12\x44iffNodeRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06method\x18\x02 \x01(\t\x12\x0f\n\x07node_id\x18\x03 \x01(\t\x12\n\n\x02ip\x18\x04 \x01(\t\x12\x11\n\tboot_time\x18\x05 \x01(\x02\x12\x11\n\tsender_ip\x18\x06 \x01(\t\x12\x12\n\ntime_stamp\x18\x07 \x01(\x02\"M\n\x13\x44iffNodeResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"W\n\x04Node\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x11\n\tboot_time\x18\x03 \x01(\x02\x12\x10\n\x08group_id\x18\x04 \x01(\x04\x12\x12\n\nis_primary\x18\x05 \x01(\x08\x32\x95\x01\n\x0eRequestService\x12:\n\x0b\x61\x64\x64_request\x12\x13.node.AddRequestDef\x1a\x14.node.AddResponseDef\"\x00\x12G\n\x0eupdate_request\x12\x18.node.DiffNodeRequestDef\x1a\x19.node.DiffNodeResponseDef\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\nnode.proto\x12\x04node\"i\n\rAddRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x11\n\tsender_ip\x18\x03 \x01(\t\x12\x11\n\tboot_time\x18\x04 \x01(\x02\x12\x12\n\ntime_stamp\x18\x05 \x01(\x02\"W\n\x0e\x41\x64\x64ResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x1d\n\tnode_list\x18\x02 \x03(\x0b\x32\n.node.Node\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"\x8f\x01\n\x12\x44iffNodeRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06method\x18\x02 \x01(\t\x12\x0f\n\x07node_id\x18\x03 \x01(\t\x12\n\n\x02ip\x18\x04 \x01(\t\x12\x11\n\tboot_time\x18\x05 \x01(\x02\x12\x11\n\tsender_ip\x18\x06 \x01(\t\x12\x12\n\ntime_stamp\x18\x07 \x01(\x02\"M\n\x13\x44iffNodeResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"M\n\x13HeartBeatRequestDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"N\n\x14HeartBeatResponseDef\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\x12\n\ntime_stamp\x18\x03 \x01(\x02\"W\n\x04Node\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x11\n\tboot_time\x18\x03 \x01(\x02\x12\x10\n\x08group_id\x18\x04 \x01(\x04\x12\x12\n\nis_primary\x18\x05 \x01(\x08\x32\xe3\x01\n\x0eRequestService\x12:\n\x0b\x61\x64\x64_request\x12\x13.node.AddRequestDef\x1a\x14.node.AddResponseDef\"\x00\x12G\n\x0eupdate_request\x12\x18.node.DiffNodeRequestDef\x1a\x19.node.DiffNodeResponseDef\"\x00\x12L\n\x11heartbeat_request\x12\x19.node.HeartBeatRequestDef\x1a\x1a.node.HeartBeatResponseDef\"\x00\x62\x06proto3'
 )
 
 
@@ -251,6 +251,98 @@ _DIFFNODERESPONSEDEF = _descriptor.Descriptor(
 )
 
 
+_HEARTBEATREQUESTDEF = _descriptor.Descriptor(
+  name='HeartBeatRequestDef',
+  full_name='node.HeartBeatRequestDef',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='request_id', full_name='node.HeartBeatRequestDef.request_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='status', full_name='node.HeartBeatRequestDef.status', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='time_stamp', full_name='node.HeartBeatRequestDef.time_stamp', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=441,
+  serialized_end=518,
+)
+
+
+_HEARTBEATRESPONSEDEF = _descriptor.Descriptor(
+  name='HeartBeatResponseDef',
+  full_name='node.HeartBeatResponseDef',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='request_id', full_name='node.HeartBeatResponseDef.request_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='status', full_name='node.HeartBeatResponseDef.status', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='time_stamp', full_name='node.HeartBeatResponseDef.time_stamp', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=520,
+  serialized_end=598,
+)
+
+
 _NODE = _descriptor.Descriptor(
   name='Node',
   full_name='node.Node',
@@ -306,8 +398,8 @@ _NODE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=441,
-  serialized_end=528,
+  serialized_start=600,
+  serialized_end=687,
 )
 
 _ADDRESPONSEDEF.fields_by_name['node_list'].message_type = _NODE
@@ -315,6 +407,8 @@ DESCRIPTOR.message_types_by_name['AddRequestDef'] = _ADDREQUESTDEF
 DESCRIPTOR.message_types_by_name['AddResponseDef'] = _ADDRESPONSEDEF
 DESCRIPTOR.message_types_by_name['DiffNodeRequestDef'] = _DIFFNODEREQUESTDEF
 DESCRIPTOR.message_types_by_name['DiffNodeResponseDef'] = _DIFFNODERESPONSEDEF
+DESCRIPTOR.message_types_by_name['HeartBeatRequestDef'] = _HEARTBEATREQUESTDEF
+DESCRIPTOR.message_types_by_name['HeartBeatResponseDef'] = _HEARTBEATRESPONSEDEF
 DESCRIPTOR.message_types_by_name['Node'] = _NODE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -346,6 +440,20 @@ DiffNodeResponseDef = _reflection.GeneratedProtocolMessageType('DiffNodeResponse
   })
 _sym_db.RegisterMessage(DiffNodeResponseDef)
 
+HeartBeatRequestDef = _reflection.GeneratedProtocolMessageType('HeartBeatRequestDef', (_message.Message,), {
+  'DESCRIPTOR' : _HEARTBEATREQUESTDEF,
+  '__module__' : 'node_pb2'
+  # @@protoc_insertion_point(class_scope:node.HeartBeatRequestDef)
+  })
+_sym_db.RegisterMessage(HeartBeatRequestDef)
+
+HeartBeatResponseDef = _reflection.GeneratedProtocolMessageType('HeartBeatResponseDef', (_message.Message,), {
+  'DESCRIPTOR' : _HEARTBEATRESPONSEDEF,
+  '__module__' : 'node_pb2'
+  # @@protoc_insertion_point(class_scope:node.HeartBeatResponseDef)
+  })
+_sym_db.RegisterMessage(HeartBeatResponseDef)
+
 Node = _reflection.GeneratedProtocolMessageType('Node', (_message.Message,), {
   'DESCRIPTOR' : _NODE,
   '__module__' : 'node_pb2'
@@ -362,8 +470,8 @@ _REQUESTSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=531,
-  serialized_end=680,
+  serialized_start=690,
+  serialized_end=917,
   methods=[
   _descriptor.MethodDescriptor(
     name='add_request',
@@ -382,6 +490,16 @@ _REQUESTSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_DIFFNODEREQUESTDEF,
     output_type=_DIFFNODERESPONSEDEF,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='heartbeat_request',
+    full_name='node.RequestService.heartbeat_request',
+    index=2,
+    containing_service=None,
+    input_type=_HEARTBEATREQUESTDEF,
+    output_type=_HEARTBEATRESPONSEDEF,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

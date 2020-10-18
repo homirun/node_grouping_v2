@@ -33,6 +33,17 @@ message DiffNodeResponseDef {
   float time_stamp = 3;
 }
 
+message HeartBeatRequestDef {
+ string request_id = 1;
+ string status = 2;
+ float time_stamp =3;
+}
+
+message HeartBeatResponseDef {
+ string request_id = 1;
+ string status = 2;
+ float time_stamp =3;
+}
 message Node{
   string id = 1;
   string ip = 2;
@@ -45,4 +56,5 @@ message Node{
 service RequestService{
   rpc add_request(AddRequestDef) returns (AddResponseDef) {};
   rpc update_request(DiffNodeRequestDef) returns (DiffNodeResponseDef) {};
+  rpc heartbeat_request(HeartBeatRequestDef) returns (HeartBeatResponseDef) {};
 }

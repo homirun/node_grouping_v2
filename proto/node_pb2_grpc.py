@@ -24,6 +24,11 @@ class RequestServiceStub(object):
                 request_serializer=node__pb2.DiffNodeRequestDef.SerializeToString,
                 response_deserializer=node__pb2.DiffNodeResponseDef.FromString,
                 )
+        self.heartbeat_request = channel.unary_unary(
+                '/node.RequestService/heartbeat_request',
+                request_serializer=node__pb2.HeartBeatRequestDef.SerializeToString,
+                response_deserializer=node__pb2.HeartBeatResponseDef.FromString,
+                )
 
 
 class RequestServiceServicer(object):
@@ -41,6 +46,12 @@ class RequestServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def heartbeat_request(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RequestServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +64,11 @@ def add_RequestServiceServicer_to_server(servicer, server):
                     servicer.update_request,
                     request_deserializer=node__pb2.DiffNodeRequestDef.FromString,
                     response_serializer=node__pb2.DiffNodeResponseDef.SerializeToString,
+            ),
+            'heartbeat_request': grpc.unary_unary_rpc_method_handler(
+                    servicer.heartbeat_request,
+                    request_deserializer=node__pb2.HeartBeatRequestDef.FromString,
+                    response_serializer=node__pb2.HeartBeatResponseDef.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +111,22 @@ class RequestService(object):
         return grpc.experimental.unary_unary(request, target, '/node.RequestService/update_request',
             node__pb2.DiffNodeRequestDef.SerializeToString,
             node__pb2.DiffNodeResponseDef.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def heartbeat_request(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/node.RequestService/heartbeat_request',
+            node__pb2.HeartBeatRequestDef.SerializeToString,
+            node__pb2.HeartBeatResponseDef.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
