@@ -1,6 +1,6 @@
 # node_grouping_v2
 
-https://github.com/homirun/node_grouping での実装を１から書き直す
+https://github.com/homirun/node_grouping で見つかった問題点を修正
 
 ## node_grouping_v2の変更点
 - RESTfulなWebAPIからgRPCへ
