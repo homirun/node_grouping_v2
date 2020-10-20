@@ -1,6 +1,5 @@
 import sys
 from multiprocessing import Process, Queue
-from queue import Empty
 
 from netifaces import ifaddresses, AF_INET
 
@@ -12,20 +11,24 @@ from utils import *
 
 logger_setting.logger_setting()
 logger = logger_setting.logger.getChild(__name__)
+failed_check_dict = dict()
 
 
 def main():
     node_id, node_list, my_ip = init()
-    q = Queue()
-    server_process = Process(target=serve, args=(q, node_list))
+    q_for_server = Queue()
+    q_for_client = Queue()
+    server_process = Process(target=serve, args=(q_for_server, q_for_client, node_list))
     server_process.start()
     logger.info('Start server_process')
+
     count = 0
+
     while True:
         count += 1
 
         try:
-            queue_content = q.get(block=True, timeout=0.5)
+            queue_content = q_for_server.get(block=True, timeout=0.5)
         except Empty:
             pass
         else:
@@ -42,7 +45,14 @@ def main():
                                               old_node_list, node_id, my_ip)
         if count >= 3:
             count = 0
-            throw_heartbeat(node_list, node_id)
+            del_node_diff = throw_heartbeat(node_list, node_id, my_ip)
+            logger.debug('diff %s', del_node_diff)
+            if del_node_diff is not None:
+                node_list = grouping(node_list)
+                share_data = {'node_list': node_list, 'method': 'del', 'diff_list': [del_node_diff]}
+                q_for_client.put(share_data)
+
+                logger.debug('del %s', del_node_diff)
 
 
 def init():
@@ -92,19 +102,23 @@ def throw_update_request(node_list_diff: list, old_node_list: list):
     pass
 
 
-def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: list, my_id, my_ip):
+def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: list, my_id: str, my_ip: str):
     for node in old_node_list:
         if node['id'] != my_id:
-            with grpc.insecure_channel(node['ip']+':50051') as channel:
-                stub = node_pb2_grpc.RequestServiceStub(channel)
-                request_message = node_pb2.DiffNodeRequestDef(request_id=create_request_id(), method=method,
-                                                              node_id=node_list_diff[0]['id'], ip=node_list_diff[0]['ip'],
-                                                              boot_time=float(node_list_diff[0]['boot_time']), sender_ip=my_ip,
-                                                              time_stamp=get_now_unix_time())
-                response = stub.update_request(request_message)
+            try:
+                with grpc.insecure_channel(node['ip']+':50051') as channel:
+                    stub = node_pb2_grpc.RequestServiceStub(channel)
+                    request_message = node_pb2.DiffNodeRequestDef(request_id=create_request_id(), method=method,
+                                                                  node_id=node_list_diff[0]['id'], ip=node_list_diff[0]['ip'],
+                                                                  boot_time=float(node_list_diff[0]['boot_time']), sender_ip=my_ip,
+                                                                  time_stamp=get_now_unix_time())
+                    logger.debug('throw_update_ip: %s', node['ip'])
+                    response = stub.update_request(request_message)
+            except grpc.RpcError as e:
+                logger.error(e)
 
 
-def throw_heartbeat(node_list, my_id):
+def throw_heartbeat(node_list: list, my_id: str, my_ip: str):
     group_node_list = get_my_group_node_list(node_list, get_my_group_id(node_list, my_id))
     for node in group_node_list:
         if node['id'] != my_id:
@@ -113,10 +127,26 @@ def throw_heartbeat(node_list, my_id):
                     stub = node_pb2_grpc.RequestServiceStub(channel)
                     request_message = node_pb2.HeartBeatRequestDef(request_id=create_request_id(), status='heartbeat',
                                                                    time_stamp=get_now_unix_time())
-                    response = stub.update_request(request_message)
+                    logger.debug('throw_heartbeat_ip: %s', node['ip'])
+                    response = stub.heartbeat_request(request_message)
             except grpc.RpcError:
+                # TODO: RpcErrorが発火するのに時間がかかるのでどうにかしたい
                 logger.error('Connection Failed: %s', node)
-                # TODO: ここに再送など障害発生時の処理を書く予定
+                if node['id'] in failed_check_dict and failed_check_dict[node['id']] <= 1:
+                    failed_check_dict[node['id']] += 1
+                    logger.debug('increment %s', failed_check_dict[node['id']])
+                elif node['id'] in failed_check_dict and failed_check_dict[node['id']] >= 2:
+                    # TODO: 同じIP,別のIDで複数登録されていることがある(要検証)
+                    for i, dic in enumerate(node_list):
+                        if dic['id'] == node['id']:
+                            del node_list[i]
+
+                    throw_update_request_beta(method='del', node_list_diff=[node], old_node_list=node_list,
+                                              my_id=my_id, my_ip=my_ip)
+                    return node
+                else:
+                    failed_check_dict[node['id']] = 1
+                    return None
 
 
 def create_node_list(my_node_id: str) -> list:

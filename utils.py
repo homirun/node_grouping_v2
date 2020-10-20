@@ -62,4 +62,3 @@ def get_is_group_for_ip(nodes, ip):
             is_my_group = True
             break
     return is_my_group
-
