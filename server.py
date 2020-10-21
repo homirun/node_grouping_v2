@@ -45,13 +45,13 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
         logger.debug('update: %s', request)
         share_data = list()
         if request.method == 'add':
-            add_node = Node(uid=request.node_id, ip=request.sender_ip, boot_time=request.boot_time).__dict__
-            share_node_list.append(Node(uid=request.node_id, ip=request.sender_ip,
+            add_node = Node(uid=request.node_id, ip=request.ip, boot_time=request.boot_time).__dict__
+            share_node_list.append(Node(uid=request.node_id, ip=request.ip,
                                         boot_time=request.boot_time).__dict__)
             share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
                           'is_allow_propagation': False}
         elif request.method == 'del':
-            del_node = Node(uid=request.node_id, ip=request.sender_ip, boot_time=request.boot_time).__dict__
+            del_node = Node(uid=request.node_id, ip=request.ip, boot_time=request.boot_time).__dict__
             for i, dic in enumerate(share_node_list):
                 if dic['id'] == request.node_id:
                     del share_node_list[i]
