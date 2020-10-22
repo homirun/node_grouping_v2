@@ -37,22 +37,22 @@ def get_my_group_node_list(nodes, my_group_id):
     return my_group_node_list
 
 
-def get_primary_node_list(nodes):
-    primary_node_list = list()
+def get_leader_node_list(nodes):
+    leader_node_list = list()
     for i in nodes:
-        if i['is_primary'] is True:
-            primary_node_list.append(i)
-    return primary_node_list
+        if i['is_leader'] is True:
+            leader_node_list.append(i)
+    return leader_node_list
 
 
-def get_is_primary(nodes, my_id):
-    is_primary = False
+def get_is_leader(nodes, my_id):
+    is_leader = False
     for i in nodes:
         if i['id'] == my_id:
-            is_primary = i['is_primary']
+            is_leader = i['is_ledear']
             break
 
-    return is_primary
+    return is_leader
 
 
 def get_is_group_for_ip(nodes, ip):
@@ -62,3 +62,17 @@ def get_is_group_for_ip(nodes, ip):
             is_my_group = True
             break
     return is_my_group
+
+
+def get_is_majority(node_list: list, group_num) -> bool:
+    if len(node_list) >= group_num:
+        count = 0
+        for dic in node_list:
+            if dic['is_leader'] is True:
+                count += 1
+
+        if group_num / 2 + 1 > count:
+            return False
+
+    return True
+
