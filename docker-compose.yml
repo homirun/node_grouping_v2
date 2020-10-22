@@ -49,6 +49,9 @@ services:
     ports:
       - 7000:50051
     command: python /var/main.py node1:50051
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.1
 
   node2:
     build: ./
@@ -62,6 +65,9 @@ services:
     depends_on:
       - node1
     command: bash -c "sleep 2 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.2
 
   node3:
     build: ./
@@ -75,6 +81,9 @@ services:
     depends_on:
       - node2
     command: bash -c "sleep 3 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.3
 
   node4:
     build: ./
@@ -88,6 +97,9 @@ services:
     depends_on:
       - node3
     command: bash -c "sleep 5 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.4
 
   node5:
     build: ./
@@ -101,6 +113,9 @@ services:
     depends_on:
       - node4
     command: bash -c "sleep 7 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.5
 
   node6:
     build: ./
@@ -114,6 +129,9 @@ services:
     depends_on:
       - node5
     command: bash -c "sleep 9 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.6
 
   node7:
     build: ./
@@ -127,6 +145,9 @@ services:
     depends_on:
       - node6
     command: bash -c "sleep 11 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.7
 
   node8:
     build: ./
@@ -140,6 +161,9 @@ services:
     depends_on:
       - node7
     command: bash -c "sleep 13 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.8
 
   node9:
     build: ./
@@ -153,6 +177,9 @@ services:
     depends_on:
       - node8
     command: bash -c "sleep 15 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.9
 
   node10:
     build: ./
@@ -166,3 +193,15 @@ services:
     depends_on:
       - node1
     command: bash -c "sleep 17 && python /var/main.py node1:50051"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.10
+
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.16.124.0/16
+         gateway: 172.16.124.100
