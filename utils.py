@@ -49,7 +49,7 @@ def get_is_leader(nodes, my_id):
     is_leader = False
     for i in nodes:
         if i['id'] == my_id:
-            is_leader = i['is_ledear']
+            is_leader = i['is_leader']
             break
 
     return is_leader
