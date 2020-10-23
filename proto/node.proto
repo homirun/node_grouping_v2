@@ -44,17 +44,30 @@ message HeartBeatResponseDef {
  string status = 2;
  float time_stamp =3;
 }
+
+message RequestHeartBeatRequestDef {
+  string request_id = 1;
+  string destination_node_id = 2;
+  float time_stamp = 3;
+}
+
+message RequestHeartBeatResponseDef {
+  string request_id = 1;
+  string status = 2;
+  float time_stamp = 3;
+}
+
 message Node{
   string id = 1;
   string ip = 2;
   float boot_time = 3;
   uint64 group_id = 4;
-  bool is_primary = 5;
-
+  bool is_leader = 5;
 }
 
 service RequestService{
   rpc add_request(AddRequestDef) returns (AddResponseDef) {};
   rpc update_request(DiffNodeRequestDef) returns (DiffNodeResponseDef) {};
   rpc heartbeat_request(HeartBeatRequestDef) returns (HeartBeatResponseDef) {};
+  rpc request_heartbeat_request(RequestHeartBeatRequestDef) returns (RequestHeartBeatResponseDef) {};
 }
