@@ -7,12 +7,12 @@ logger = logger_setting.logger.getChild(__name__)
 
 
 class Node:
-    def __init__(self, uid, ip, boot_time, group_id=None, is_primary=False, is_me=False):
+    def __init__(self, uid, ip, boot_time, group_id=None, is_leader=False, is_me=False):
         self.id = uid
         self.ip = ip
         self.boot_time = boot_time
         self.group_id = group_id
-        self.is_primary = is_primary
+        self.is_leader = is_leader
 
     def set_ip(self, ip):
         self.ip = ip
@@ -26,18 +26,17 @@ class Node:
     def get_group(self):
         pass
 
-    def set_primary_status(self, is_primary: bool):
-        self.is_primary = is_primary
+    def set_leader_status(self, is_leader: bool):
+        self.is_leader = is_leader
 
-    def get_primary_status(self):
-        return self.is_primary
+    def get_leader_status(self):
+        return self.is_leader
 
 
-def grouping(node_list):
+def grouping(node_list, group_num):
     logger.info('Start grouping')
     # ここを検証の際に変更する
     start_time = time.time()
-    group_num = 3
     # print(node_list)
     sorted_node_list = boot_time_upper_sort(node_list)
 
@@ -49,7 +48,7 @@ def grouping(node_list):
         for i in range(node_list_length):
             # print(i)
             sorted_node_list[0]['group_id'] = i + 1
-            sorted_node_list[0]['is_primary'] = True
+            sorted_node_list[0]['is_leader'] = True
             grouped_node_list.append(sorted_node_list.pop(0))
 
     else:
@@ -61,17 +60,17 @@ def grouping(node_list):
 
                 if flag:
                     flag = False
-                    sorted_node_list[0]['is_primary'] = False
+                    sorted_node_list[0]['is_leader'] = False
                     sorted_node_list[0]['group_id'] = i + 1
                     local_grouped_list.append(sorted_node_list.pop(0))
                 else:
                     flag = True
-                    sorted_node_list[-1]['is_primary'] = False
+                    sorted_node_list[-1]['is_leader'] = False
                     sorted_node_list[-1]['group_id'] = i + 1
                     local_grouped_list.append(sorted_node_list.pop(-1))
             # 何回もソートかけてるので直したい
             local_grouped_list = boot_time_upper_sort(local_grouped_list)
-            local_grouped_list[-1]['is_primary'] = True
+            local_grouped_list[-1]['is_leader'] = True
             grouped_node_list.extend(local_grouped_list)
 
         last_node_groups_count = node_list_length % group_num
@@ -84,17 +83,17 @@ def grouping(node_list):
         for k in range(int(node_list_length / group_num) + last_node_groups_count):
             if flag:
                 flag = False
-                sorted_node_list[0]['is_primary'] = False
+                sorted_node_list[0]['is_leader'] = False
                 sorted_node_list[0]['group_id'] = group_num
                 local_grouped_list.append(sorted_node_list.pop(0))
             else:
                 flag = True
-                sorted_node_list[-1]['is_primary'] = False
+                sorted_node_list[-1]['is_leader'] = False
                 sorted_node_list[-1]['group_id'] = group_num
                 local_grouped_list.append(sorted_node_list.pop(-1))
 
         local_grouped_list = boot_time_upper_sort(local_grouped_list)
-        local_grouped_list[-1]['is_primary'] = True
+        local_grouped_list[-1]['is_leader'] = True
         grouped_node_list.extend(local_grouped_list)
 
     grouped_node_list = boot_time_upper_sort(grouped_node_list)

@@ -7,14 +7,14 @@ message AddRequestDef {
   string request_id = 1;
   string id = 2;
   string sender_ip = 3;
-  float boot_time = 4;
-  float time_stamp = 5;
+  double boot_time = 4;
+  double time_stamp = 5;
 }
 
 message AddResponseDef {
   string request_id = 1;
   repeated Node node_list = 2;
-  float time_stamp = 3;
+  double time_stamp = 3;
 }
 
 message DiffNodeRequestDef {
@@ -22,45 +22,45 @@ message DiffNodeRequestDef {
   string method = 2;
   string node_id = 3;
   string ip = 4;
-  float boot_time = 5;
+  double boot_time = 5;
   string sender_ip = 6;
-  float time_stamp = 7;
+  double time_stamp = 7;
 }
 
 message DiffNodeResponseDef {
   string request_id = 1;
   string status = 2;
-  float time_stamp = 3;
+  double time_stamp = 3;
 }
 
 message HeartBeatRequestDef {
  string request_id = 1;
  string status = 2;
- float time_stamp =3;
+ double time_stamp =3;
 }
 
 message HeartBeatResponseDef {
  string request_id = 1;
  string status = 2;
- float time_stamp =3;
+ double time_stamp =3;
 }
 
 message RequestHeartBeatRequestDef {
   string request_id = 1;
   string destination_node_id = 2;
-  float time_stamp = 3;
+  double time_stamp = 3;
 }
 
 message RequestHeartBeatResponseDef {
   string request_id = 1;
   string status = 2;
-  float time_stamp = 3;
+  double time_stamp = 3;
 }
 
 message Node{
   string id = 1;
   string ip = 2;
-  float boot_time = 3;
+  double boot_time = 3;
   uint64 group_id = 4;
   bool is_leader = 5;
 }

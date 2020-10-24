@@ -8,6 +8,7 @@ from node import *
 import logger_setting
 from utils import *
 
+GROUP_NUM = 3
 
 logger_setting.logger_setting()
 logger = logger_setting.logger.getChild(__name__)
@@ -20,9 +21,10 @@ def main():
     q_for_client = Queue()
     server_process = Process(target=serve, args=(q_for_server, q_for_client, node_list))
     server_process.start()
-    logger.info('Start server_process')
 
+    stop_node_list = list()
     count = 0
+    is_majority = True
 
     while True:
         count += 1
@@ -35,24 +37,34 @@ def main():
             if queue_content:
                 old_node_list = node_list
                 node_list = queue_content['node_list']
-                node_list = grouping(node_list)
+                node_list = grouping(node_list, GROUP_NUM)
                 # if 'for_primary' in queue_content and queue_content['for_primary'] is True:
                 #     # for_primaryキー存在しかつTrueの際にはPrimaryへは発出しない
                 #     pass
                 # else:
+                if queue_content['method'] == 'del':
+                    stop_node_list.append(queue_content['diff_list'][0])
                 if queue_content['is_allow_propagation'] is True:
                     throw_update_request_beta(queue_content['method'], queue_content['diff_list'],
                                               old_node_list, node_id, my_ip)
+
         if count >= 3:
             count = 0
-            del_node_diff = throw_heartbeat(node_list, node_id, my_ip)
+            del_node_diff = throw_heartbeat(node_list, stop_node_list, node_id, my_ip)
             logger.debug('diff %s', del_node_diff)
-            if del_node_diff is not None:
-                node_list = grouping(node_list)
+
+            if del_node_diff is False:
+                _down_node(server_process)
+            elif del_node_diff is not None:
+                is_majority = get_is_majority(node_list, GROUP_NUM)
+                node_list = grouping(node_list, GROUP_NUM)
                 share_data = {'node_list': node_list, 'method': 'del', 'diff_list': [del_node_diff]}
                 q_for_client.put(share_data)
 
                 logger.debug('del %s', del_node_diff)
+
+        #if not is_majority:
+        #    _down_node(server_process)
 
 
 def init():
@@ -79,7 +91,7 @@ def init():
         else:
             node_list.extend(res_node_list)
 
-        node_list = grouping(node_list)
+        node_list = grouping(node_list, GROUP_NUM)
 
     return node_id, node_list, my_ip
 
@@ -93,7 +105,7 @@ def throw_add_request(node_id: str, request_ip: str, my_ip: str) -> list:
         response_node_list = list()
         for node in response.node_list:
             tmp_node = Node(uid=node.id, ip=node.ip, boot_time=node.boot_time, group_id=node.group_id,
-                            is_primary=node.is_primary)
+                            is_leader=node.is_leader)
             response_node_list.append(tmp_node.__dict__)
     return response_node_list
 
@@ -109,16 +121,19 @@ def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: 
                 with grpc.insecure_channel(node['ip']+':50051') as channel:
                     stub = node_pb2_grpc.RequestServiceStub(channel)
                     request_message = node_pb2.DiffNodeRequestDef(request_id=create_request_id(), method=method,
-                                                                  node_id=node_list_diff[0]['id'], ip=node_list_diff[0]['ip'],
-                                                                  boot_time=float(node_list_diff[0]['boot_time']), sender_ip=my_ip,
+                                                                  node_id=node_list_diff[0]['id'],
+                                                                  ip=node_list_diff[0]['ip'],
+                                                                  boot_time=float(node_list_diff[0]['boot_time']),
+                                                                  sender_ip=my_ip,
                                                                   time_stamp=get_now_unix_time())
                     logger.debug('throw_update_ip: %s', node['ip'])
                     response = stub.update_request(request_message)
             except grpc.RpcError as e:
-                logger.error(e)
+                logger.error('gRPC Error Message: %s', e)
 
 
-def throw_heartbeat(node_list: list, my_id: str, my_ip: str):
+def throw_heartbeat(node_list: list, stop_node_list: list, my_id: str, my_ip: str):
+    # TODO:
     group_node_list = get_my_group_node_list(node_list, get_my_group_id(node_list, my_id))
     for node in group_node_list:
         if node['id'] != my_id:
@@ -136,17 +151,46 @@ def throw_heartbeat(node_list: list, my_id: str, my_ip: str):
                     failed_check_dict[node['id']] += 1
                     logger.debug('increment %s', failed_check_dict[node['id']])
                 elif node['id'] in failed_check_dict and failed_check_dict[node['id']] >= 2:
-                    # TODO: 同じIP,別のIDで複数登録されていることがある(要検証)
-                    for i, dic in enumerate(node_list):
-                        if dic['id'] == node['id']:
-                            del node_list[i]
+                    # TODO: ネットワーク分断か判定を入れる
+                    # 再groupingする前に判定してノードリストから削除するのかそれとも過半数チェックするかを確認
+                    if request_heartbeat_for_leader(node_list, node, my_id):
+                        for i, dic in enumerate(node_list):
+                            if dic['id'] == node['id']:
+                                del node_list[i]
 
-                    throw_update_request_beta(method='del', node_list_diff=[node], old_node_list=node_list,
-                                              my_id=my_id, my_ip=my_ip)
-                    return node
+                        stop_node_list.append(node)
+                        throw_update_request_beta(method='del', node_list_diff=[node], old_node_list=node_list,
+                                                  my_id=my_id, my_ip=my_ip)
+                        return node
+                    else:
+                        return False
                 else:
                     failed_check_dict[node['id']] = 1
                     return None
+
+
+def request_heartbeat_for_leader(node_list: list, check_node, my_id: str) -> bool:
+    leader_node_list = get_leader_node_list(node_list)
+    failed_response_list = list()
+    for dic in leader_node_list:
+        if dic['id'] != my_id:
+            try:
+                with grpc.insecure_channel(dic['ip'] + ':50051') as channel:
+                    stub = node_pb2_grpc.RequestServiceStub(channel)
+                    request_message = node_pb2.RequestHeartBeatRequestDef(request_id=create_request_id(),
+                                                                          destination_node_id=check_node['id'],
+                                                                          time_stamp=get_now_unix_time())
+                    logger.debug('request_heartbeat_for_leader ip: %s, check: %s', dic['ip'], check_node['ip'])
+                    response = stub.request_heartbeat_request(request_message)
+            except grpc.RpcError:
+                logger.error('failed request_heartbeat_for_leader ip: %s', dic['ip'])
+                failed_response_list.append(dic['id'])
+
+    print(failed_response_list)
+    if len(failed_response_list) >= (int(GROUP_NUM / 2) + 1):
+        return False
+
+    return True
 
 
 def create_node_list(my_node_id: str) -> list:
@@ -163,6 +207,13 @@ def create_node_list(my_node_id: str) -> list:
     pre_node_list.append(my_node.__dict__)
 
     return pre_node_list
+
+
+def _down_node(server_process):
+    logger.error('Less than half of leader nodes')
+    # TODO: .close()やexit()から再復帰処理へ置き換える
+    server_process.terminate()
+    exit()
 
 
 if __name__ == '__main__':
