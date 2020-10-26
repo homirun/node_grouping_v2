@@ -36,11 +36,17 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
 
         logger.debug('request: %s', request)
         add_node = Node(uid=request.id, ip=request.sender_ip, boot_time=request.boot_time).__dict__
-        share_node_list.append(add_node)
-        share_node_list = grouping(share_node_list, GROUP_NUM)
-        share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
-                      'is_allow_propagation': True}
-        process_queue.put(share_data)
+        add_list_flag = True
+        for dic in share_node_list:
+            if dic['id'] == request.id:
+                add_list_flag = False
+        if add_list_flag:
+            share_node_list.append(add_node)
+            share_node_list = grouping(share_node_list, GROUP_NUM)
+            share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
+                          'is_allow_propagation': True}
+            process_queue.put(share_data)
+
         return node_pb2.AddResponseDef(request_id=request.request_id, node_list=share_node_list,
                                        time_stamp=float(datetime.now().strftime('%s')))
 
@@ -50,10 +56,15 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
         share_data = list()
         if request.method == 'add':
             add_node = Node(uid=request.node_id, ip=request.ip, boot_time=request.boot_time).__dict__
-            share_node_list.append(Node(uid=request.node_id, ip=request.ip,
-                                        boot_time=request.boot_time).__dict__)
-            share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
-                          'is_allow_propagation': False}
+            add_list_flag = True
+            for dic in share_node_list:
+                if dic['id'] == request.node_id:
+                    add_list_flag = False
+            if add_list_flag:
+                share_node_list.append(Node(uid=request.node_id, ip=request.ip,
+                                            boot_time=request.boot_time).__dict__)
+                share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
+                              'is_allow_propagation': False}
         elif request.method == 'del':
             del_node = Node(uid=request.node_id, ip=request.ip, boot_time=request.boot_time).__dict__
             for i, dic in enumerate(share_node_list):
