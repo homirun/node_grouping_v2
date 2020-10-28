@@ -125,7 +125,7 @@ def init():
 
 
 def throw_add_request(node_id: str, request_ip: str, my_ip: str) -> list:
-    with grpc.insecure_channel(request_ip, options=(('grpc.initial_reconnect_backoff_ms', 200), ('grpc.min_reconnect_backoff_ms', 200))) as channel:
+    with grpc.insecure_channel(request_ip, options=(('grpc.initial_reconnect_backoff_ms', 500), ('grpc.min_reconnect_backoff_ms', 500))) as channel:
         stub = node_pb2_grpc.RequestServiceStub(channel)
         request_message = node_pb2.AddRequestDef(request_id=create_request_id(), id=node_id, sender_ip=my_ip,
                                                  boot_time=get_boot_unix_time(), time_stamp=get_now_unix_time())
@@ -146,7 +146,7 @@ def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: 
     for node in old_node_list:
         if node['id'] != my_id:
             try:
-                with grpc.insecure_channel(node['ip']+':50051', options=(('grpc.initial_reconnect_backoff_ms', 200), ('grpc.min_reconnect_backoff_ms', 200))) as channel:
+                with grpc.insecure_channel(node['ip']+':50051', options=(('grpc.initial_reconnect_backoff_ms', 500), ('grpc.min_reconnect_backoff_ms', 500))) as channel:
                     stub = node_pb2_grpc.RequestServiceStub(channel)
                     request_message = node_pb2.DiffNodeRequestDef(request_id=create_request_id(), method=method,
                                                                   node_id=node_list_diff[0]['id'],
@@ -168,7 +168,7 @@ def throw_heartbeat(node_list: list, stop_node_list: list, my_id: str, my_ip: st
     for node in group_node_list:
         if node['id'] != my_id:
             try:
-                with grpc.insecure_channel(node['ip']+':50051', options=(('grpc.initial_reconnect_backoff_ms', 200), ('grpc.min_reconnect_backoff_ms', 200))) as channel:
+                with grpc.insecure_channel(node['ip']+':50051', options=(('grpc.initial_reconnect_backoff_ms', 500), ('grpc.min_reconnect_backoff_ms', 500))) as channel:
                     stub = node_pb2_grpc.RequestServiceStub(channel)
                     request_message = node_pb2.HeartBeatRequestDef(request_id=create_request_id(), status='heartbeat',
                                                                    time_stamp=get_now_unix_time())
@@ -204,7 +204,7 @@ def request_heartbeat_for_leader(node_list: list, check_node, my_id: str) -> boo
     for dic in leader_node_list:
         if dic['id'] != my_id:
             try:
-                with grpc.insecure_channel(dic['ip']+':50051', options=(('grpc.initial_reconnect_backoff_ms', 200), ('grpc.min_reconnect_backoff_ms', 200))) as channel:
+                with grpc.insecure_channel(dic['ip']+':50051', options=(('grpc.initial_reconnect_backoff_ms', 500), ('grpc.min_reconnect_backoff_ms', 500))) as channel:
                     stub = node_pb2_grpc.RequestServiceStub(channel)
                     request_message = node_pb2.RequestHeartBeatRequestDef(request_id=create_request_id(),
                                                                           destination_node_id=check_node['id'],
