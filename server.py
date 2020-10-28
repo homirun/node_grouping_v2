@@ -51,7 +51,11 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
                                        time_stamp=float(datetime.now().strftime('%s')))
 
     def update_request(self, request, context):
-        global share_node_list, process_queue
+        global share_node_list, process_queue, process_queue_for_client
+        updated_list = _check_update(process_queue_for_client)
+        if updated_list is not None:
+            share_node_list = updated_list
+
         logger.debug('update: %s', request)
         share_data = list()
         if request.method == 'add':
@@ -85,14 +89,22 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
                                             time_stamp=get_now_unix_time())
 
     def heartbeat_request(self, request, context):
-        global share_node_list, process_queue
+        global share_node_list, process_queue, process_queue_for_client
+        updated_list = _check_update(process_queue_for_client)
+        if updated_list is not None:
+            share_node_list = updated_list
+
         # logger.debug('heartbeat: %s', request)
         # TODO: node_listを参照していなければ通告する
         return node_pb2.HeartBeatResponseDef(request_id=request.request_id, status='heartbeat_response',
                                              time_stamp=get_now_unix_time())
 
     def request_heartbeat_request(self, request, context):
-        global share_node_list, process_queue
+        global share_node_list, process_queue, process_queue_for_client
+        updated_list = _check_update(process_queue_for_client)
+        if updated_list is not None:
+            share_node_list = updated_list
+
         # TODO: 実際にはここで指定されたノードへハートビートを送りその結果をstatusに含めて返す
         return node_pb2.RequestHeartBeatResponseDef(request_id=request.request_id, status='request_heartbeat_response',
                                                     time_stamp=get_now_unix_time())

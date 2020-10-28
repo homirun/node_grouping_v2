@@ -46,27 +46,30 @@ def main():
                     # else:
                     if queue_content['method'] == 'del':
                         stop_node_list.append(queue_content['diff_list'][0])
+                        for i, dic in enumerate(node_list):
+                            if dic['id'] == queue_content['diff_list'][0]['id']:
+                                del node_list[i]
                     if queue_content['is_allow_propagation'] is True:
                         throw_update_request_beta(queue_content['method'], queue_content['diff_list'],
                                                   old_node_list, node_id, my_ip)
+            finally:
+                if count >= 3:
+                    count = 0
+                    del_node_diff = throw_heartbeat(node_list, stop_node_list, node_id, my_ip)
+                    logger.debug('diff %s', del_node_diff)
 
-            if count >= 3:
-                count = 0
-                del_node_diff = throw_heartbeat(node_list, stop_node_list, node_id, my_ip)
-                logger.debug('diff %s', del_node_diff)
+                    if del_node_diff is False:
+                        _down_node(server_process)
+                    elif del_node_diff is not None:
+                        is_majority = get_is_majority(node_list, GROUP_NUM)
+                        node_list = grouping(node_list, GROUP_NUM)
+                        share_data = {'node_list': node_list, 'method': 'del', 'diff_list': [del_node_diff]}
+                        q_for_client.put(share_data)
 
-                if del_node_diff is False:
-                    _down_node(server_process)
-                elif del_node_diff is not None:
-                    is_majority = get_is_majority(node_list, GROUP_NUM)
-                    node_list = grouping(node_list, GROUP_NUM)
-                    share_data = {'node_list': node_list, 'method': 'del', 'diff_list': [del_node_diff]}
-                    q_for_client.put(share_data)
+                        logger.debug('del %s', del_node_diff)
 
-                    logger.debug('del %s', del_node_diff)
-
-            # if not is_majority:
-            #    _down_node(server_process)
+                # if not is_majority:
+                #    _down_node(server_process)
 
         else:
             leader_node_list = get_leader_node_list(node_list)
@@ -172,7 +175,6 @@ def throw_heartbeat(node_list: list, stop_node_list: list, my_id: str, my_ip: st
                     logger.debug('throw_heartbeat_ip: %s', node['ip'])
                     response = stub.heartbeat_request(request_message)
             except grpc.RpcError:
-                # TODO: RpcErrorが発火するのに時間がかかるのでどうにかしたい
                 logger.error('Connection Failed: %s', node)
                 if node['id'] in failed_check_dict and failed_check_dict[node['id']] <= 1:
                     failed_check_dict[node['id']] += 1
