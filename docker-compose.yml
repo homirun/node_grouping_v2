@@ -5,7 +5,7 @@ services:
 #    image: python:3.8
 #    container_name: node1
 #    volumes:
-#      - ./:/var/
+#      - ./node_grouping/:/var/
 #    tty: true
 #    ports:
 #      - 7000:50051
@@ -16,7 +16,7 @@ services:
 #    image: python:3.8
 #    container_name: node2
 #    volumes:
-#      - ./:/var/
+#      - ./node_grouping/:/var/
 #    tty: true
 #    ports:
 #      - 8000:50051
@@ -29,7 +29,7 @@ services:
 #    image: python:3.8
 #    container_name: node3
 #    volumes:
-#      - ./:/var/
+#      - ./node_grouping/:/var/
 #    tty: true
 #    ports:
 #      - 9000:50051
@@ -44,7 +44,7 @@ services:
     image: python:3.8
     container_name: node1
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 7000:50051
@@ -58,7 +58,7 @@ services:
     image: python:3.8
     container_name: node2
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 8000:50051
@@ -74,7 +74,7 @@ services:
     image: python:3.8
     container_name: node3
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 9000:50051
@@ -90,7 +90,7 @@ services:
     image: python:3.8
     container_name: node4
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 7100:50051
@@ -106,7 +106,7 @@ services:
     image: python:3.8
     container_name: node5
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 8100:50051
@@ -122,7 +122,7 @@ services:
     image: python:3.8
     container_name: node6
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 9100:50051
@@ -138,7 +138,7 @@ services:
     image: python:3.8
     container_name: node7
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 7200:50051
@@ -154,7 +154,7 @@ services:
     image: python:3.8
     container_name: node8
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 8200:50051
@@ -170,7 +170,7 @@ services:
     image: python:3.8
     container_name: node9
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 9200:50051
@@ -186,7 +186,7 @@ services:
     image: python:3.8
     container_name: node10
     volumes:
-      - ./:/var/
+      - ./node_grouping/:/var/
     tty: true
     ports:
       - 10000:50051
