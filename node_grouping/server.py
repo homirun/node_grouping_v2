@@ -25,7 +25,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
     def add_request(self, request, context):
         global share_node_list, process_queue
 
-        updated_list = _check_update(process_queue_for_client)
+        updated_list = _check_update(process_queue_for_client, share_node_list)
         if updated_list is not None:
             share_node_list = updated_list
 
@@ -52,7 +52,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
 
     def update_request(self, request, context):
         global share_node_list, process_queue, process_queue_for_client
-        updated_list = _check_update(process_queue_for_client)
+        updated_list = _check_update(process_queue_for_client, share_node_list)
         if updated_list is not None:
             share_node_list = updated_list
 
@@ -90,7 +90,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
 
     def heartbeat_request(self, request, context):
         global share_node_list, process_queue, process_queue_for_client
-        updated_list = _check_update(process_queue_for_client)
+        updated_list = _check_update(process_queue_for_client, share_node_list)
         if updated_list is not None:
             share_node_list = updated_list
 
@@ -101,7 +101,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
 
     def request_heartbeat_request(self, request, context):
         global share_node_list, process_queue, process_queue_for_client
-        updated_list = _check_update(process_queue_for_client)
+        updated_list = _check_update(process_queue_for_client, share_node_list)
         if updated_list is not None:
             share_node_list = updated_list
 
@@ -129,10 +129,29 @@ def serve(q_for_server: object, q_for_client: object, default_node_list: list):
         server.stop(0)
 
 
-def _check_update(q):
+def _check_update(q, node_list):
     try:
         queue_content = q.get(block=False)
     except Empty:
         return None
     else:
-        return queue_content['node_list']
+        if queue_content['method'] == 'add':
+            add_node = Node(uid=queue_content['diff_list'][0]['id'], ip=queue_content['diff_list'][0]['ip'],
+                            boot_time=queue_content['diff_list'][0]['boot_time']).__dict__
+            add_list_flag = True
+            for dic in node_list:
+                if dic['id'] == queue_content['diff_list'][0]['id']:
+                    add_list_flag = False
+            if add_list_flag:
+                node_list.append(add_node)
+                node_list = grouping(node_list, GROUP_NUM)
+        elif queue_content['method'] == 'del':
+            del_node = Node(uid=queue_content['diff_list'][0]['id'], ip=queue_content['diff_list'][0]['ip'],
+                            boot_time=queue_content['diff_list'][0]['boot_time']).__dict__
+            for i, dic in enumerate(node_list):
+                if dic['id'] == queue_content['diff_list'][0]['id']:
+                    del node_list[i]
+                    # is_majority = get_is_majority(share_node_list, GROUP_NUM)
+                    node_list = grouping(node_list, GROUP_NUM)
+
+    return node_list
