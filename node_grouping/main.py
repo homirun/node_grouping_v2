@@ -119,7 +119,7 @@ def init():
         else:
             node_list.extend(res_node_list)
 
-        node_list = grouping(node_list, GROUP_NUM)
+        # node_list = grouping(node_list, GROUP_NUM)
 
     return node_id, node_list, my_ip
 
@@ -146,7 +146,7 @@ def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: 
     for node in old_node_list:
         if node['id'] != my_id:
             try:
-                with grpc.insecure_channel(node['ip']+':50051', options=(('grpc.initial_reconnect_backoff_ms', 500), ('grpc.min_reconnect_backoff_ms', 500))) as channel:
+                with grpc.insecure_channel(node['ip']+':50051', options=(('grpc.initial_reconnect_backoff_ms', 1000), ('grpc.min_reconnect_backoff_ms', 1000))) as channel:
                     stub = node_pb2_grpc.RequestServiceStub(channel)
                     request_message = node_pb2.DiffNodeRequestDef(request_id=create_request_id(), method=method,
                                                                   node_id=node_list_diff[0]['id'],
