@@ -37,6 +37,22 @@ services:
 #      - node1
 
 
+  demo_api_server:
+    build: ./
+    image: python:3.8
+    container_name: demo_api_server
+    volumes:
+      - ./node_grouping/:/var/
+    tty: true
+    ports:
+      - 11000:50051
+      - 5000:5000
+    depends_on:
+      - node1
+    command: bash -c "sleep 5 && python /var/api_server.py"
+    networks:
+      app_net:
+        ipv4_address: 172.16.124.99
 
 
   node1:
@@ -196,6 +212,8 @@ services:
     networks:
       app_net:
         ipv4_address: 172.16.124.10
+
+
 
 networks:
   app_net:

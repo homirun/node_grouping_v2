@@ -16,7 +16,7 @@ def get_boot_unix_time() -> float:
 
 
 def get_now_unix_time() -> float:
-    return float(datetime.now().strftime('%s'))
+    return float(datetime.now().strftime('%s.%f'))
 
 
 def get_my_group_id(nodes, my_id):

@@ -48,7 +48,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
             process_queue.put(share_data)
 
         return node_pb2.AddResponseDef(request_id=request.request_id, node_list=share_node_list,
-                                       time_stamp=float(datetime.now().strftime('%s')))
+                                       time_stamp=get_now_unix_time())
 
     def update_request(self, request, context):
         global share_node_list, process_queue, process_queue_for_client
@@ -112,7 +112,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
     def nodes_status_request(self, request, context):
         global share_node_list
         return node_pb2.AddResponseDef(request_id=request.request_id, node_list=share_node_list,
-                                       time_stamp=float(datetime.now().strftime('%s')))
+                                       time_stamp=get_now_unix_time())
 
 
 def serve(q_for_server: object, q_for_client: object, default_node_list: list):
