@@ -1,18 +1,20 @@
-import json
 from subprocess import Popen
 
 import requests
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 proc1 = None
-proc2 =None
+proc2 = None
 
 
 @app.route('/nodes_status', methods=['get'])
 def nodes_status():
-    r = requests.get('localhost:5000')
-    return json.dumps(r.json())
+    r = requests.get('http://localhost:5000/api/nodes_status')
+    return jsonify(r.json())
 
 
 @app.route('/network_partition/start', methods=['get'])
