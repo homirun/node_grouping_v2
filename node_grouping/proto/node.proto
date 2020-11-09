@@ -57,6 +57,19 @@ message RequestHeartBeatResponseDef {
   double time_stamp = 3;
 }
 
+message NodesStatusRequestDef {
+  string request_id = 1;
+  double time_stamp = 2;
+}
+
+
+message NodesStatusResponseDef {
+  string request_id = 1;
+  repeated Node node_list = 2;
+  double time_stamp = 3;
+}
+
+
 message Node{
   string id = 1;
   string ip = 2;
@@ -70,4 +83,5 @@ service RequestService{
   rpc update_request(DiffNodeRequestDef) returns (DiffNodeResponseDef) {};
   rpc heartbeat_request(HeartBeatRequestDef) returns (HeartBeatResponseDef) {};
   rpc request_heartbeat_request(RequestHeartBeatRequestDef) returns (RequestHeartBeatResponseDef) {};
+  rpc nodes_status_request(NodesStatusRequestDef) returns (NodesStatusResponseDef) {};
 }

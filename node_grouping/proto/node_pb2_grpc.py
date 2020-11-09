@@ -34,6 +34,11 @@ class RequestServiceStub(object):
                 request_serializer=node__pb2.RequestHeartBeatRequestDef.SerializeToString,
                 response_deserializer=node__pb2.RequestHeartBeatResponseDef.FromString,
                 )
+        self.nodes_status_request = channel.unary_unary(
+                '/node.RequestService/nodes_status_request',
+                request_serializer=node__pb2.NodesStatusRequestDef.SerializeToString,
+                response_deserializer=node__pb2.NodesStatusResponseDef.FromString,
+                )
 
 
 class RequestServiceServicer(object):
@@ -63,6 +68,12 @@ class RequestServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def nodes_status_request(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RequestServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -85,6 +96,11 @@ def add_RequestServiceServicer_to_server(servicer, server):
                     servicer.request_heartbeat_request,
                     request_deserializer=node__pb2.RequestHeartBeatRequestDef.FromString,
                     response_serializer=node__pb2.RequestHeartBeatResponseDef.SerializeToString,
+            ),
+            'nodes_status_request': grpc.unary_unary_rpc_method_handler(
+                    servicer.nodes_status_request,
+                    request_deserializer=node__pb2.NodesStatusRequestDef.FromString,
+                    response_serializer=node__pb2.NodesStatusResponseDef.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -161,5 +177,22 @@ class RequestService(object):
         return grpc.experimental.unary_unary(request, target, '/node.RequestService/request_heartbeat_request',
             node__pb2.RequestHeartBeatRequestDef.SerializeToString,
             node__pb2.RequestHeartBeatResponseDef.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def nodes_status_request(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/node.RequestService/nodes_status_request',
+            node__pb2.NodesStatusRequestDef.SerializeToString,
+            node__pb2.NodesStatusResponseDef.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
