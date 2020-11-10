@@ -13,6 +13,7 @@ logger = logger_setting.logger.getChild(__name__)
 share_node_list = list()
 process_queue = None
 process_queue_for_client = None
+node_list_history = list()
 
 GROUP_NUM = 3
 
@@ -45,6 +46,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
             share_node_list = grouping(share_node_list, GROUP_NUM)
             share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
                           'is_allow_propagation': True}
+            _manage_node_list_history(share_data, request.time_stamp)
             process_queue.put(share_data)
 
         return node_pb2.AddResponseDef(request_id=request.request_id, node_list=share_node_list,
@@ -83,6 +85,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
         else:
             pass
 
+        _manage_node_list_history(share_data, request.time_stamp)
         process_queue.put(share_data)
 
         return node_pb2.DiffNodeResponseDef(request_id=request.request_id, status='OK',
@@ -160,3 +163,48 @@ def _check_update(q, node_list):
                     node_list = grouping(node_list, GROUP_NUM)
 
     return node_list
+
+
+def _manage_node_list_history(share_data, time_stamp):
+    global node_list_history
+    share_data['time_stamp'] = time_stamp
+
+    node_list_history = sorted(node_list_history, key=lambda x: x['time_stamp'], reverse=True)
+    flag = False
+    for i, dic in enumerate(node_list_history):
+        if dic['time_stamp'] >= time_stamp:
+            flag = True
+            break
+
+    node_list_history.append(share_data)
+
+    if flag:
+        _apply_history()
+
+    if len(node_list_history) >= 4:
+        node_list_history.pop()
+
+
+def _apply_history():
+    global node_list_history, share_node_list
+    for share_data in node_list_history:
+        process_queue.put(share_data)
+        if share_data['method'] == 'add':
+            add_node = Node(uid=share_data['diff_list'][0]['id'], ip=share_data['diff_list'][0]['ip'],
+                            boot_time=share_data['diff_list'][0]['boot_time']).__dict__
+            add_list_flag = True
+            for dic in share_node_list:
+                if dic['id'] == share_data['diff_list'][0]['id']:
+                    add_list_flag = False
+            if add_list_flag:
+                share_node_list.append(add_node)
+                share_node_list = grouping(share_node_list, GROUP_NUM)
+        elif share_data['method'] == 'del':
+            del_node = Node(uid=share_data['diff_list'][0]['id'], ip=share_data['diff_list'][0]['ip'],
+                            boot_time=share_data['diff_list'][0]['boot_time']).__dict__
+            for i, dic in enumerate(share_node_list):
+                if dic['id'] == share_data['diff_list'][0]['id']:
+                    del share_node_list[i]
+                    # is_majority = get_is_majority(share_node_list, GROUP_NUM)
+                    share_node_list = grouping(share_node_list, GROUP_NUM)
+
