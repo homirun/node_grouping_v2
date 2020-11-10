@@ -1,31 +1,49 @@
 <template>
-  {{ results }}
+  <button v-on:click="startNetworkPartition">ネットワーク分断開始</button>
+  <button v-on:click="stopNetworkPartition">ネットワーク分断終了</button>
   <div id="node_status_view">
-    <h2>Group1</h2>
+    <h2 v-if="!is_partition">Group1</h2>
     <div class="group">
       <div class="first_half">
-        <div class="node" v-for="n in filteredGroup1FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">{{n}}</div>
+        <div class="node" v-for="n in filteredGroup1FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
+          {{'Node'+n.ip.slice((-1))}}
+        </div>
       </div>
+      <div class="v_line" v-if="is_partition"></div>
       <div class="latter_half">
-        <div class="node" v-for="n in filteredGroup1LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">{{n}}</div>
+        <div class="node" v-for="n in filteredGroup1LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
+          {{'Node'+n.ip.slice((-1))}}
+        </div>
       </div>
     </div>
-    <h2>Group2</h2>
+    <div class="v_line" v-if="is_partition"></div>
+    <h2 v-if="!is_partition">Group2</h2>
     <div class="group">
       <div class="first_half">
-        <div class="node" v-for="n in filteredGroup2FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">{{n}}</div>
+        <div class="node" v-for="n in filteredGroup2FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
+          {{'Node'+n.ip.slice((-1))}}
+        </div>
       </div>
+      <div class="v_line" v-if="is_partition"></div>
       <div class="latter_half">
-        <div class="node" v-for="n in filteredGroup2LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">{{n}}</div>
+        <div class="node" v-for="n in filteredGroup2LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
+          {{'Node'+n.ip.slice((-1))}}
+        </div>
       </div>
     </div>
-    <h2>Group3</h2>
+    <div class="v_line" v-if="is_partition"></div>
+    <h2 v-if="!is_partition">Group3</h2>
     <div class="group">
       <div class="first_half">
-        <div class="node" v-for="n in filteredGroup3FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">{{n}}</div>
+        <div class="node" v-for="n in filteredGroup3FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
+          {{'Node'+n.ip.slice((-1))}}
+        </div>
       </div>
+      <div class="v_line" v-if="is_partition"></div>
       <div class="latter_half">
-        <div class="node" v-for="n in filteredGroup3LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">{{n}}</div>
+        <div class="node" v-for="n in filteredGroup3LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
+          {{'Node'+n.ip.slice((-1))}}
+        </div>
       </div>
 
     </div>
@@ -38,7 +56,8 @@ export default {
   name: 'NodeStatus',
   data: function () {
     return {
-      results: []
+      results: [],
+      is_partition: false
     }
   },
   computed:{
@@ -86,19 +105,35 @@ export default {
     }
   },
   mounted() {
-    let me = this
+    let me = this;
     axios.get('http://localhost:5500/nodes_status').then(function(response) {
       me.results = response.data;
       console.log(me.results);
     }).catch(function(error){ console.log(error); });
+
     setInterval(function() {
       axios.get('http://localhost:5500/nodes_status').then(function(response){
         me.results = response.data;
+        console.log(me.results);
+      }).catch(function(error){ console.log(error);});
+    }, 1000);
+  },
+  methods:{
+    startNetworkPartition() {
+      let me = this;
+      axios.get('http://localhost:5500/network_partition/start').then(function() {
+        me.is_partition = true;
+      }).catch(function(error){ console.log(error); });
+    },
+    stopNetworkPartition() {
+      let me = this;
+      axios.get('http://localhost:5500/network_partition/stop').then(function() {
+        me.is_partition = false;
+    }).catch(function(error){ console.log(error); });
+    }
 
-      console.log(me.results);
-    }).catch(function(error){ console.log(error);});
-  }, 1000);
   }
+
 }
 
 </script>
@@ -110,18 +145,18 @@ export default {
 }
 
 .first_half{
-  width: 50%;
+  width: 49%;
 }
 .latter_half{
-  width: 50%;
+  width: 49%;
 }
 
 .group{
   border: #000 dashed .1rem;
-  width: 100%;
+  width: calc(100% - 0.2rem);
   display: flex;
   flex-wrap: wrap;
-  margin: 2rem 0;
+  margin: 0;
 }
 
 .node{
@@ -129,6 +164,7 @@ export default {
   height: 5rem;
   margin: 1rem auto;
 }
+
 
 .group1_node{
   background-color: #F48FB1;
@@ -144,6 +180,19 @@ export default {
 
 .is_leader{
   border: #F44336 solid 3px;
+}
+
+.group > .v_line {
+  width: 5px;
+  background-color: brown;
+  margin: 0 auto;
+}
+
+#node_status_view > .v_line {
+  width: 5px;
+  background-color: brown;
+  height: 130px;
+  margin: 0 auto;
 }
 
 </style>
