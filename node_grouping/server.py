@@ -45,8 +45,8 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
             share_node_list.append(add_node)
             share_node_list = grouping(share_node_list, GROUP_NUM)
             share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
-                          'is_allow_propagation': True, 'request': 'add'}
-            _manage_node_list_history(share_data, request.time_stamp)
+                          'is_allow_propagation': True, 'request': 'add', 'time_stamp': request.time_stamp}
+            # _manage_node_list_history(share_data, request.time_stamp)
             process_queue.put(share_data)
 
         return node_pb2.AddResponseDef(request_id=request.request_id, node_list=share_node_list,
@@ -70,7 +70,9 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
                 share_node_list.append(Node(uid=request.node_id, ip=request.ip,
                                             boot_time=request.boot_time).__dict__)
                 share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
-                              'is_allow_propagation': False, 'request': 'update'}
+                              'is_allow_propagation': False, 'request': 'update', 'time_stamp': request.time_stamp}
+                process_queue.put(share_data)
+
         elif request.method == 'del':
             del_node = Node(uid=request.node_id, ip=request.ip, boot_time=request.boot_time).__dict__
             for i, dic in enumerate(share_node_list):
@@ -79,14 +81,14 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
                     # is_majority = get_is_majority(share_node_list, GROUP_NUM)
                     share_node_list = grouping(share_node_list, GROUP_NUM)
                     share_data = {'node_list': share_node_list, 'method': 'del', 'diff_list': [del_node],
-                                  'is_allow_propagation': False, 'request': 'update'}
+                                  'is_allow_propagation': False, 'request': 'update', 'time_stamp': request.time_stamp}
                     # share_data = {'node_list': share_node_list, 'method': 'del', 'diff_list': [del_node],
                     #               'is_allow_propagation': False, 'is_majority': is_majority}
+                    process_queue.put(share_data)
         else:
             pass
 
-        _manage_node_list_history(share_data, request.time_stamp)
-        process_queue.put(share_data)
+        # _manage_node_list_history(share_data, request.time_stamp)
 
         return node_pb2.DiffNodeResponseDef(request_id=request.request_id, status='OK',
                                             time_stamp=get_now_unix_time())
@@ -99,6 +101,8 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
 
         # logger.debug('heartbeat: %s', request)
         # TODO: node_listを参照していなければ通告する
+        # for dic in share_node_list:
+        #     if dic['id'] == request.
         return node_pb2.HeartBeatResponseDef(request_id=request.request_id, status='heartbeat_response',
                                              time_stamp=get_now_unix_time())
 
@@ -168,10 +172,10 @@ def _check_update(q, node_list):
 def _manage_node_list_history(share_data, time_stamp):
     global node_list_history
     share_data['time_stamp'] = time_stamp
-
-    node_list_history = sorted(node_list_history, key=lambda x: x['time_stamp'], reverse=True)
+    if len(node_list_history) > 0:
+        node_list_history = sorted(node_list_history, key=lambda x: x['time_stamp'])
     flag = False
-    for i, dic in enumerate(node_list_history):
+    for dic in node_list_history:
         if dic['time_stamp'] >= time_stamp:
             flag = True
             break
@@ -182,7 +186,7 @@ def _manage_node_list_history(share_data, time_stamp):
         _apply_history()
 
     if len(node_list_history) >= 4:
-        node_list_history.pop()
+        node_list_history.pop(0)
 
 
 def _apply_history():
