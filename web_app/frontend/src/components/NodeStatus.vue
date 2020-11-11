@@ -6,13 +6,13 @@
     <div class="group">
       <div class="first_half">
         <div class="node" v-for="n in filteredGroup1FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
-          {{'Node'+n.ip.slice((-1))}}
+          {{'Node' + [n.ip.slice((-1))==='0' ? '10' :n.ip.slice((-1))]}}
         </div>
       </div>
       <div class="v_line" v-if="is_partition"></div>
       <div class="latter_half">
         <div class="node" v-for="n in filteredGroup1LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
-          {{'Node'+n.ip.slice((-1))}}
+          {{'Node' + [n.ip.slice((-1))==='0' ? '10' :n.ip.slice((-1))]}}
         </div>
       </div>
     </div>
@@ -21,13 +21,13 @@
     <div class="group">
       <div class="first_half">
         <div class="node" v-for="n in filteredGroup2FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
-          {{'Node'+n.ip.slice((-1))}}
+          {{'Node' + [n.ip.slice((-1))==='0' ? '10' :n.ip.slice((-1))]}}
         </div>
       </div>
       <div class="v_line" v-if="is_partition"></div>
       <div class="latter_half">
         <div class="node" v-for="n in filteredGroup2LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
-          {{'Node'+n.ip.slice((-1))}}
+          {{'Node' + [n.ip.slice((-1))==='0' ? '10' :n.ip.slice((-1))]}}
         </div>
       </div>
     </div>
@@ -36,13 +36,13 @@
     <div class="group">
       <div class="first_half">
         <div class="node" v-for="n in filteredGroup3FirstHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
-          {{'Node'+n.ip.slice((-1))}}
+          {{'Node' + [n.ip.slice((-1))==='0' ? '10' :n.ip.slice((-1))]}}
         </div>
       </div>
       <div class="v_line" v-if="is_partition"></div>
       <div class="latter_half">
         <div class="node" v-for="n in filteredGroup3LatterHalf" :class="['group'+n.group_id+'_node', n.is_leader ? 'is_leader' : '']"  :key="n">
-          {{'Node'+n.ip.slice((-1))}}
+          {{'Node' + [n.ip.slice((-1))==='0' ? '10' :n.ip.slice((-1))]}}
         </div>
       </div>
 
@@ -163,6 +163,7 @@ export default {
   width: 85%;
   height: 5rem;
   margin: 1rem auto;
+  font-size: 3rem;
 }
 
 
@@ -180,6 +181,7 @@ export default {
 
 .is_leader{
   border: #F44336 solid 3px;
+  font-weight: bold;
 }
 
 .group > .v_line {
@@ -191,7 +193,7 @@ export default {
 #node_status_view > .v_line {
   width: 5px;
   background-color: brown;
-  height: 130px;
+  height: 50px;
   margin: 0 auto;
 }
 

@@ -49,7 +49,7 @@ services:
       - 5000:5000
     depends_on:
       - node1
-    command: bash -c "sleep 5 && python /var/demo_api_server.py"
+    command: bash -c "python /var/demo_api_server.py"
     networks:
       app_net:
         ipv4_address: 172.16.124.99
