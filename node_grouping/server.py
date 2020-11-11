@@ -45,7 +45,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
             share_node_list.append(add_node)
             share_node_list = grouping(share_node_list, GROUP_NUM)
             share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
-                          'is_allow_propagation': True}
+                          'is_allow_propagation': True, 'request': 'add'}
             _manage_node_list_history(share_data, request.time_stamp)
             process_queue.put(share_data)
 
@@ -70,7 +70,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
                 share_node_list.append(Node(uid=request.node_id, ip=request.ip,
                                             boot_time=request.boot_time).__dict__)
                 share_data = {'node_list': share_node_list, 'method': 'add', 'diff_list': [add_node],
-                              'is_allow_propagation': False}
+                              'is_allow_propagation': False, 'request': 'update'}
         elif request.method == 'del':
             del_node = Node(uid=request.node_id, ip=request.ip, boot_time=request.boot_time).__dict__
             for i, dic in enumerate(share_node_list):
@@ -79,7 +79,7 @@ class RequestServiceServicer(node_pb2_grpc.RequestServiceServicer):
                     # is_majority = get_is_majority(share_node_list, GROUP_NUM)
                     share_node_list = grouping(share_node_list, GROUP_NUM)
                     share_data = {'node_list': share_node_list, 'method': 'del', 'diff_list': [del_node],
-                                  'is_allow_propagation': False}
+                                  'is_allow_propagation': False, 'request': 'update'}
                     # share_data = {'node_list': share_node_list, 'method': 'del', 'diff_list': [del_node],
                     #               'is_allow_propagation': False, 'is_majority': is_majority}
         else:

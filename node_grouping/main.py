@@ -25,6 +25,7 @@ def main():
     server_process.start()
 
     stop_node_list = list()
+    near_add_node_list = list()
     count = 0
     is_majority = True
 
@@ -38,13 +39,16 @@ def main():
             else:
                 if queue_content:
                     old_node_list = node_list
-                    node_list = queue_content['node_list']
-                    node_list = grouping(node_list, GROUP_NUM)
+                    # node_list = queue_content['node_list']
+                    # node_list = grouping(node_list, GROUP_NUM)
                     # if 'for_primary' in queue_content and queue_content['for_primary'] is True:
                     #     # for_primaryキー存在しかつTrueの際にはPrimaryへは発出しない
                     #     pass
                     # else:
-                    if queue_content['method'] == 'del':
+                    if queue_content['method'] == 'add':
+                        node_list.append(queue_content['diff_list'][0])
+                        node_list = grouping(node_list, GROUP_NUM)
+                    elif queue_content['method'] == 'del':
                         stop_node_list.append(queue_content['diff_list'][0])
                         for i, dic in enumerate(node_list):
                             if dic['id'] == queue_content['diff_list'][0]['id']:
@@ -52,6 +56,10 @@ def main():
                     if queue_content['is_allow_propagation'] is True:
                         throw_update_request_beta(queue_content['method'], queue_content['diff_list'],
                                                   old_node_list, node_id, my_ip)
+
+                    if queue_content['request'] == 'add':
+                        near_add_node_list.extend(queue_content['diff_list'][0])
+
             finally:
                 if count >= 3:
                     count = 0
