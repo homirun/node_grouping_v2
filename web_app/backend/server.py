@@ -13,8 +13,11 @@ proc2 = None
 
 @app.route('/nodes_status', methods=['get'])
 def nodes_status():
-    r = requests.get('http://localhost:5000/api/nodes_status')
-    return jsonify(r.json())
+    try:
+        r = requests.get('http://localhost:5000/api/nodes_status')
+        return jsonify(r.json())
+    except Exception as e:
+        return jsonify([])
 
 
 @app.route('/network_partition/start', methods=['get'])

@@ -27,11 +27,14 @@ def get_node_list():
             request_message = node_pb2.AddRequestDef(request_id=create_request_id(), time_stamp=get_now_unix_time())
             response = stub.nodes_status_request(request_message)
     except grpc.RpcError:
-        request_ip = '172.16.124.10'
-        with grpc.insecure_channel(request_ip + ':50051') as channel:
-            stub = node_pb2_grpc.RequestServiceStub(channel)
-            request_message = node_pb2.AddRequestDef(request_id=create_request_id(), time_stamp=get_now_unix_time())
-            response = stub.nodes_status_request(request_message)
+        try:
+            request_ip = '172.16.124.10'
+            with grpc.insecure_channel(request_ip + ':50051') as channel:
+                stub = node_pb2_grpc.RequestServiceStub(channel)
+                request_message = node_pb2.AddRequestDef(request_id=create_request_id(), time_stamp=get_now_unix_time())
+                response = stub.nodes_status_request(request_message)
+        except grpc.RpcError:
+            return []
     finally:
         response_node_list = list()
         for node in response.node_list:
