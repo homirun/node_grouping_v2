@@ -22,5 +22,5 @@ https://github.com/homirun/node_grouping で見つかった問題点を修正
 2. デモ用Webアプリのバックエンドの起動  
 ```python ./web_app/backend &```
 3. デモ用Webアプリのフロントエンドの起動  
-```cd web_app/frontend```
+```cd web_app/frontend```  
 ```npm run serve```
