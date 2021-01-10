@@ -196,5 +196,9 @@ export default {
   height: 50px;
   margin: 0 auto;
 }
+button {
+  font-size: 3rem;
+  margin: 1rem;
+}
 
 </style>
