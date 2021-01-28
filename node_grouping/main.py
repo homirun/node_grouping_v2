@@ -14,6 +14,7 @@ logger_setting.logger_setting()
 logger = logger_setting.logger.getChild(__name__)
 failed_check_dict = dict()
 node_status = True
+start_time = None
 
 
 def main():
@@ -88,6 +89,21 @@ def main():
                         q_for_client.put(share_data)
 
                         logger.debug('del %s', del_node_diff)
+
+                # TODO: 実験用コード(復旧処理時間)
+                # if len(node_list) <= 10:
+                #     start_time = time.time()
+                #     print('up_time_reset')
+                #
+                # if len(node_list) == 20:
+                #     end_time = time.time()
+                #     try:
+                #         logger.info('up_time: %f', end_time - start_time)
+                #     except Exception:
+                #         pass
+                # *************************
+
+
 
                 # if not is_majority:
                 #    _down_node(server_process)
@@ -182,6 +198,7 @@ def throw_update_request_beta(method: str, node_list_diff: list, old_node_list: 
 
 
 def throw_heartbeat(node_list: list, stop_node_list: list, my_id: str, my_ip: str):
+    global start_time
     group_node_list = get_my_group_node_list(node_list, get_my_group_id(node_list, my_id))
     if get_is_leader(node_list, my_id):
         group_node_list.extend(get_leader_node_list(node_list))
@@ -198,6 +215,11 @@ def throw_heartbeat(node_list: list, stop_node_list: list, my_id: str, my_ip: st
             except grpc.RpcError:
                 logger.error('Connection Failed: %s', node)
                 if node['id'] in failed_check_dict and failed_check_dict[node['id']] <= 1:
+
+                    # TODO: 実験コード(停止時間測定1)
+                    start_time = time.time()
+                    # *************************
+
                     failed_check_dict[node['id']] += 1
                     logger.debug('increment %s', failed_check_dict[node['id']])
                 elif node['id'] in failed_check_dict and failed_check_dict[node['id']] >= 2:
@@ -261,7 +283,7 @@ def create_node_list(my_node_id: str) -> list:
 
 
 def _down_node(server_process):
-    global node_status, failed_check_dict
+    global node_status, failed_check_dict, start_time
     logger.error('Less than half of leader nodes')
     logger.info('Node status: False')
     # TODO: .close()やexit()から再復帰処理へ置き換える
@@ -269,6 +291,14 @@ def _down_node(server_process):
     node_status = False
     failed_check_dict = dict()
     server_process.terminate()
+    # TODO: 実験コード(停止時間測定2)
+    end_time = time.time()
+    try:
+        logger.info('down_time: %f', end_time - start_time)
+    except Exception:
+        pass
+    # *************************
+
     # exit()
 
 

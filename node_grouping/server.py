@@ -129,7 +129,7 @@ def serve(q_for_server: object, q_for_client: object, default_node_list: list):
     process_queue = q_for_server
     process_queue_for_client = q_for_client
 
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=30))
     node_pb2_grpc.add_RequestServiceServicer_to_server(RequestServiceServicer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
